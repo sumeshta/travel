@@ -46,7 +46,7 @@
 										{{$item->title}}
 									</div>
 									<div class="context">
-										{!! $item->content  !!}
+										{!! enrich_footer_social_links($item->content) !!}
 									</div>
 								</div>
 							</div>

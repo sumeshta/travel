@@ -23,6 +23,7 @@
     <link href="{{ asset('libs/ionicons/css/ionicons.min.css') }}" rel="stylesheet">
     <link href="{{ asset('libs/icofont/icofont.min.css') }}" rel="stylesheet">
     <link href="{{ asset('dist/frontend/css/app.css?_ver='.config('app.asset_version')) }}" rel="stylesheet">
+    <link href="{{ asset('css/footer-social.css?_ver='.config('app.asset_version')) }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/daterange/daterangepicker.css") }}" >
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">

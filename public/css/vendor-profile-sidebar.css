@@ -75,6 +75,8 @@
     text-decoration: underline;
 }
 
+/* Public vendor profile page (/profile/{slug}) */
+.page-profile-content .profile-summary .profile-social-links,
 .bravo-detail-profile-aside .profile-summary .profile-social-links,
 .bravo-vendor-profile-sidebar .profile-social-links {
     text-align: center;
@@ -82,6 +84,7 @@
     font-size: 16px;
 }
 
+.page-profile-content .profile-summary .profile-social-links a.social-link,
 .bravo-detail-profile-aside .profile-summary .profile-social-links a.social-link,
 .bravo-vendor-profile-sidebar .profile-social-links a.social-link {
     display: inline-flex;
@@ -96,11 +99,13 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
+.page-profile-content .profile-summary .profile-social-links a.social-link i,
 .bravo-detail-profile-aside .profile-summary .profile-social-links a.social-link i,
 .bravo-vendor-profile-sidebar .profile-social-links a.social-link i {
     color: #fff;
 }
 
+.page-profile-content .profile-summary .profile-social-links a.social-link:hover,
 .bravo-detail-profile-aside .profile-summary .profile-social-links a.social-link:hover,
 .bravo-vendor-profile-sidebar .profile-social-links a.social-link:hover {
     transform: translateY(-1px);
@@ -108,30 +113,35 @@
     opacity: 0.95;
 }
 
+.page-profile-content .profile-summary .profile-social-links a.social-facebook,
 .bravo-detail-profile-aside .profile-summary .profile-social-links a.social-facebook,
 .bravo-vendor-profile-sidebar .profile-social-links a.social-facebook {
     background: #1877F2;
     border-color: #1877F2;
 }
 
+.page-profile-content .profile-summary .profile-social-links a.social-youtube,
 .bravo-detail-profile-aside .profile-summary .profile-social-links a.social-youtube,
 .bravo-vendor-profile-sidebar .profile-social-links a.social-youtube {
     background: #FF0000;
     border-color: #FF0000;
 }
 
+.page-profile-content .profile-summary .profile-social-links a.social-instagram,
 .bravo-detail-profile-aside .profile-summary .profile-social-links a.social-instagram,
 .bravo-vendor-profile-sidebar .profile-social-links a.social-instagram {
     background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
     border-color: #d6249f;
 }
 
+.page-profile-content .profile-summary .profile-social-links a.social-twitter,
 .bravo-detail-profile-aside .profile-summary .profile-social-links a.social-twitter,
 .bravo-vendor-profile-sidebar .profile-social-links a.social-twitter {
     background: #1DA1F2;
     border-color: #1DA1F2;
 }
 
+.page-profile-content .profile-summary .profile-social-links a.social-linkedin,
 .bravo-detail-profile-aside .profile-summary .profile-social-links a.social-linkedin,
 .bravo-vendor-profile-sidebar .profile-social-links a.social-linkedin {
     background: #0A66C2;

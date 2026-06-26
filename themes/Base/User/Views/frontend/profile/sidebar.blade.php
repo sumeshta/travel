@@ -126,6 +126,11 @@
         </li>
     </ul>
     @endif
+    @endif
+    @php
+        $hasSocialLinks = $user->facebook || $user->youtube || $user->twitter || $user->linkedin || $user->instagram;
+    @endphp
+    @if($hasSocialLinks)
     <div class="profile-social-links">
         @if($user->facebook != NULL)
         <a href="{{$user->facebook??'#'}}" class="social-link social-facebook" target="_blank" rel="noopener noreferrer"><i class="fa fa-facebook"></i></a>
@@ -143,6 +148,5 @@
         <a href="{{$user->instagram??'#'}}" class="social-link social-instagram" target="_blank" rel="noopener noreferrer"><i class="fa fa-instagram"></i></a>
         @endif
     </div>
-   
     @endif
 </div>

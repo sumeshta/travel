@@ -1097,6 +1097,65 @@ function get_currency_switcher_url($code = false){
     return url($url);
 }
 
+/**
+ * Add social-link classes to footer widget anchors (Facebook, Instagram, etc.).
+ */
+function enrich_footer_social_links($html)
+{
+    if (!is_string($html) || $html === '') {
+        return $html;
+    }
+
+    $iconClassMap = [
+        'facebook' => 'social-facebook',
+        'youtube-play' => 'social-youtube',
+        'youtube' => 'social-youtube',
+        'instagram' => 'social-instagram',
+        'twitter' => 'social-twitter',
+        'linkedin' => 'social-linkedin',
+    ];
+
+    return preg_replace_callback(
+        '/<a\b([^>]*)>(.*?)<\/a>/is',
+        function ($matches) use ($iconClassMap) {
+            $attrs = $matches[1];
+            $inner = $matches[2];
+
+            if (stripos($attrs, 'social-link') !== false) {
+                return $matches[0];
+            }
+
+            $socialClass = null;
+            foreach ($iconClassMap as $iconFragment => $class) {
+                if (preg_match('/\b(?:icofont|fa)-' . preg_quote($iconFragment, '/') . '\b/i', $inner)) {
+                    $socialClass = $class;
+                    break;
+                }
+            }
+
+            if (!$socialClass) {
+                return $matches[0];
+            }
+
+            if (preg_match('/\bclass=("|\')(.*?)\1/i', $attrs, $classMatch)) {
+                $quote = $classMatch[1];
+                $existing = $classMatch[2];
+                $newClass = trim('social-link ' . $socialClass . ' ' . $existing);
+                $attrs = preg_replace('/\bclass=("|\').*?\1/i', 'class=' . $quote . $newClass . $quote, $attrs, 1);
+            } else {
+                $attrs .= ' class="social-link ' . $socialClass . '"';
+            }
+
+            if (stripos($attrs, 'target=') === false) {
+                $attrs .= ' target="_blank" rel="noopener noreferrer"';
+            }
+
+            return '<a' . $attrs . '>' . $inner . '</a>';
+        },
+        $html
+    );
+}
+
 
 function translate_or_origin($key,$settings = [],$locale = '')
 {
