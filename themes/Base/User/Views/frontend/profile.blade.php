@@ -166,7 +166,13 @@
                     <label>{{__("Twitter")}}</label>
                     <input type="text" value="{{old('twitter',$dataUser->twitter)}}" name="twitter" placeholder="{{__("Twitter")}}" class="form-control">
                     <i class="fa fa-twitter input-icon"></i>
-                </div>  
+                </div>
+
+                <div class="form-group">
+                    <label>{{__("Google Business")}}</label>
+                    <input type="text" value="{{old('google_business',$dataUser->google_business)}}" name="google_business" placeholder="{{__("Google Business Profile URL")}}" class="form-control">
+                    <i class="fa fa-google input-icon"></i>
+                </div>
 
 
 

@@ -128,7 +128,7 @@
     @endif
     @endif
     @php
-        $hasSocialLinks = $user->facebook || $user->youtube || $user->twitter || $user->linkedin || $user->instagram;
+        $hasSocialLinks = $user->facebook || $user->youtube || $user->twitter || $user->linkedin || $user->instagram || $user->google_business;
     @endphp
     @if($hasSocialLinks)
     <div class="profile-social-links">
@@ -140,6 +140,9 @@
         @endif
         @if($user->twitter != NULL)
         <a href="{{$user->twitter??'#'}}" class="social-link social-twitter" target="_blank" rel="noopener noreferrer"><i class="fa fa-twitter"></i></a>
+        @endif
+        @if($user->google_business != NULL)
+        <a href="{{$user->google_business??'#'}}" class="social-link social-google-business" target="_blank" rel="noopener noreferrer"><i class="fa fa-google"></i></a>
         @endif
         @if($user->linkedin != NULL)
         <a href="{{$user->linkedin??'#'}}" class="social-link social-linkedin" target="_blank" rel="noopener noreferrer"><i class="fa fa-linkedin"></i></a>

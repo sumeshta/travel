@@ -141,6 +141,13 @@
     border-color: #1DA1F2;
 }
 
+.page-profile-content .profile-summary .profile-social-links a.social-google-business,
+.bravo-detail-profile-aside .profile-summary .profile-social-links a.social-google-business,
+.bravo-vendor-profile-sidebar .profile-social-links a.social-google-business {
+    background: #4285F4;
+    border-color: #4285F4;
+}
+
 .page-profile-content .profile-summary .profile-social-links a.social-linkedin,
 .bravo-detail-profile-aside .profile-summary .profile-social-links a.social-linkedin,
 .bravo-vendor-profile-sidebar .profile-social-links a.social-linkedin {

@@ -71,6 +71,7 @@
             'instagram',
             'linkedin',
             'twitter',
+            'google_business',
             'role_id',
         ];
 
