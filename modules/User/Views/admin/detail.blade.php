@@ -63,7 +63,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{ __('Address Line 1')}}</label>
-                                        <input type="text" value="{{old('address',$row->address)}}" placeholder="{{ __('Address')}}" name="address" class="form-control">
+                                        <input type="text" value="{{old('address',$row->address)}}" placeholder="{{ __('Address')}}" name="address" id="customPlaceAddress" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -99,6 +99,34 @@
                                     <div class="form-group">
                                         <label>{{__("Zip Code")}}</label>
                                         <input type="text" value="{{old('zip_code',$row->zip_code)}}" name="zip_code" placeholder="{{__("Zip Code")}}" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">{{__("The geographic coordinate")}}</label>
+                                        <div class="control-map-group">
+                                            <div id="map_content"></div>
+                                            <input type="text" placeholder="{{__("Search by name...")}}" class="bravo_searchbox form-control" autocomplete="off" onkeydown="return event.key !== 'Enter';">
+                                            <div class="g-control">
+                                                <div class="form-group">
+                                                    <label>{{__("Map Latitude")}}:</label>
+                                                    <input type="text" name="map_lat" class="form-control" value="{{old('map_lat',$row->map_lat)}}" onkeydown="return event.key !== 'Enter';">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>{{__("Map Longitude")}}:</label>
+                                                    <input type="text" name="map_lng" class="form-control" value="{{old('map_lng',$row->map_lng)}}" onkeydown="return event.key !== 'Enter';">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>{{__("Map Zoom")}}:</label>
+                                                    <input type="text" name="map_zoom" class="form-control" value="{{old('map_zoom',$row->map_zoom ?? 18)}}" onkeydown="return event.key !== 'Enter';">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="map-google-url-field mt-3">
+                                            <label>{{__("Google Maps place link")}}</label>
+                                            <input type="url" name="map_google_url" class="form-control" value="{{old('map_google_url',$row->map_google_url)}}" placeholder="https://www.google.com/maps/place/...">
+                                            <p class="help-block">{{__('Paste the full link from Google Maps → Share → Copy link (opens the exact business pin).')}}</p>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -192,3 +220,53 @@
         </div>
     </form>
 @endsection
+
+@push('js')
+    {!! App\Helpers\MapEngine::scripts() !!}
+    <script>
+        jQuery(function ($) {
+            new BravoMapEngine('map_content', {
+                disableScripts: true,
+                fitBounds: true,
+                center: [{{$row->map_lat ?? setting_item('map_lat_default',51.505 ) }}, {{$row->map_lng ?? setting_item('map_lng_default',-0.09 ) }}],
+                zoom:{{$row->map_zoom ?? 18}},
+                ready: function (engineMap) {
+                    @if($row->map_lat && $row->map_lng)
+                    engineMap.addMarker([{{$row->map_lat}}, {{$row->map_lng}}], {
+                        icon_options: {}
+                    });
+                    @endif
+                    engineMap.on('click', function (dataLatLng) {
+                        engineMap.clearMarkers();
+                        engineMap.addMarker(dataLatLng, {
+                            icon_options: {}
+                        });
+                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
+                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
+                    });
+                    engineMap.on('zoom_changed', function (zoom) {
+                        $("input[name=map_zoom]").attr("value", zoom);
+                    });
+                    if(bookingCore.map_provider === "gmap"){
+                        engineMap.searchBox($('#customPlaceAddress'),function (dataLatLng) {
+                            engineMap.clearMarkers();
+                            engineMap.addMarker(dataLatLng, {
+                                icon_options: {}
+                            });
+                            $("input[name=map_lat]").attr("value", dataLatLng[0]);
+                            $("input[name=map_lng]").attr("value", dataLatLng[1]);
+                        });
+                    }
+                    engineMap.searchBox($('.bravo_searchbox'),function (dataLatLng) {
+                        engineMap.clearMarkers();
+                        engineMap.addMarker(dataLatLng, {
+                            icon_options: {}
+                        });
+                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
+                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
+                    });
+                }
+            });
+        })
+    </script>
+@endpush

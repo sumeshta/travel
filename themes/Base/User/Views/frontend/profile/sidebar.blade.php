@@ -36,21 +36,13 @@
     @endif
     @if(setting_item('vendor_show_email') or setting_item('vendor_show_phone'))
     @php
-        $addressLines = array_filter([
-            $user->address ?? null,
-            $user->address2 ?? null,
-            $user->city ?? null,
-            $user->state ?? null,
-        ], fn ($line) => filled(trim((string) $line)));
-        $fullAddress = !empty($addressLines) ? implode(', ', $addressLines) : '';
-        $googleLocationUrl = $fullAddress !== ''
-            ? 'https://www.google.com/search?q=' . rawurlencode($fullAddress)
-            : null;
+        $addressLines = vendor_profile_address_lines($user);
+        $googleLocationUrl = vendor_profile_google_maps_url($user);
 
         $showEmail = setting_item('vendor_show_email') && $user->email;
         $showPhone = setting_item('vendor_show_phone') && $user->phone;
         $showWhatsapp = setting_item('vendor_show_phone') && ($user->whatsapp_code || $user->whatsapp);
-        $showAddress = !empty($addressLines) && $googleLocationUrl;
+        $showAddress = (!empty($addressLines) || vendor_profile_map_coordinates($user)) && $googleLocationUrl;
     @endphp
     <hr>
     @if($showEmail)
@@ -119,8 +111,12 @@
         <li class="user_address">
             <span class="label">{{__('Address:')}}</span>
             <span class="val">
-                <a href="{{ $googleLocationUrl }}" class="user-address-google-link" target="_blank" rel="noopener noreferrer" title="{{ __('Search this location on Google') }}">
+                <a href="{{ $googleLocationUrl }}" class="user-address-google-link" target="_blank" rel="noopener noreferrer" title="{{ __('Open in Google Maps') }}">
+                    @if(!empty($addressLines))
                     {!! implode('<br>', array_map('e', $addressLines)) !!}
+                    @else
+                    {{ __('View on map') }}
+                    @endif
                 </a>
             </span>
         </li>

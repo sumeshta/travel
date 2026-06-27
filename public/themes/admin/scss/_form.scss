@@ -156,6 +156,7 @@
 
 .control-map-group{
     position: relative;
+    min-height: 300px;
     #map_content{
         margin-right: 270px;
         height: 300px;
@@ -188,6 +189,12 @@
             width: 100%;
             position: relative;
         }
+    }
+}
+.map-google-url-field{
+    label{
+        display: block;
+        margin-bottom: 5px;
     }
 }
 .panel-index{

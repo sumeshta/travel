@@ -1457,6 +1457,7 @@
         }
         .control-map-group{
             position: relative;
+            min-height: 300px;
             #map_content{
                 margin-right: 270px;
                 height: 300px;
@@ -1487,6 +1488,12 @@
                 left: 10px;
                 border-radius: 0;
                 height: 45px;
+            }
+        }
+        .map-google-url-field{
+            label{
+                display: block;
+                margin-bottom: 5px;
             }
         }
         .badge{

@@ -140,9 +140,16 @@
         <div class="location-title">
             <h3>{{__("Location")}}</h3>
             @if($translation->address)
+                @php $mapsUrl = bookable_google_maps_url($row, $translation->title ?? null); @endphp
                 <div class="address">
                     <i class="icofont-location-arrow"></i>
-                    {{$translation->address}}
+                    @if($mapsUrl)
+                        <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer" class="user-address-google-link">
+                            {{ $translation->address }}
+                        </a>
+                    @else
+                        {{ $translation->address }}
+                    @endif
                 </div>
             @endif
         </div>

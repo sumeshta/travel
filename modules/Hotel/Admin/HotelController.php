@@ -229,6 +229,7 @@ class HotelController extends AdminController
             'map_lat',
             'map_lng',
             'map_zoom',
+            'map_google_url',
             'star_rate',
             'price',
             'sale_price',

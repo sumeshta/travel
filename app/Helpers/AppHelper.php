@@ -1098,6 +1098,232 @@ function get_currency_switcher_url($code = false){
 }
 
 /**
+ * Build Google Maps search URL for a free-text address query.
+ */
+function google_maps_search_url(string $query): ?string
+{
+    $query = trim(preg_replace('/\s*,\s*/', ', ', preg_replace('/,+/', ',', $query)), ', ');
+    if ($query === '') {
+        return null;
+    }
+
+    return 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode($query);
+}
+
+/**
+ * Resolve display name for Google Maps place link (prefer listing title).
+ */
+function vendor_profile_place_name($user): ?string
+{
+    if (class_exists(\Modules\Hotel\Models\Hotel::class) && !empty($user->id)) {
+        $hotel = \Modules\Hotel\Models\Hotel::query()
+            ->where('author_id', $user->id)
+            ->where('status', 'publish')
+            ->orderByDesc('id')
+            ->first(['title']);
+        if ($hotel && filled($hotel->title)) {
+            return trim((string) $hotel->title);
+        }
+    }
+
+    $name = trim((string) ($user->business_name ?: (method_exists($user, 'getDisplayName') ? $user->getDisplayName() : '')));
+
+    return $name !== '' ? $name : null;
+}
+
+/**
+ * Use explicit Google Maps URL when set, otherwise build from coords + place name.
+ */
+function google_maps_resolve_url($lat, $lng, $zoom, ?string $placeName = null, ?string $overrideUrl = null): ?string
+{
+    $overrideUrl = trim((string) $overrideUrl);
+    if ($overrideUrl !== '' && preg_match('#^https?://#i', $overrideUrl)) {
+        return $overrideUrl;
+    }
+
+    if (!is_numeric($lat) || !is_numeric($lng)) {
+        return null;
+    }
+
+    return google_maps_coords_url($lat, $lng, $zoom, $placeName);
+}
+
+/**
+ * Build Google Maps URL for latitude/longitude coordinates (pin + focused view).
+ */
+function google_maps_coords_url($lat, $lng, $zoom = 18, ?string $placeName = null): ?string
+{
+    if (!is_numeric($lat) || !is_numeric($lng)) {
+        return null;
+    }
+
+    $lat = (float) $lat;
+    $lng = (float) $lng;
+
+    if ($lat < -90 || $lat > 90 || $lng < -180 || $lng > 180) {
+        return null;
+    }
+
+    if (abs($lat) < 0.000001 && abs($lng) < 0.000001) {
+        return null;
+    }
+
+    $zoom = max(14, min(21, (int) ($zoom ?: 18)));
+    $latStr = rtrim(rtrim(sprintf('%.7f', $lat), '0'), '.');
+    $lngStr = rtrim(rtrim(sprintf('%.7f', $lng), '0'), '.');
+
+    $placeName = trim((string) $placeName);
+    if ($placeName !== '') {
+        return sprintf(
+            'https://www.google.com/maps/place/%s/@%s,%s,%dz',
+            rawurlencode($placeName),
+            $latStr,
+            $lngStr,
+            $zoom
+        );
+    }
+
+    // Never use /place//@ — coords-only fallback
+    return sprintf(
+        'https://www.google.com/maps/search/?api=1&query=%s&zoom=%d',
+        rawurlencode($latStr . ',' . $lngStr),
+        $zoom
+    );
+}
+
+/**
+ * Google Maps URL for a bookable listing (hotel, tour, etc.) with map coordinates.
+ */
+function bookable_google_maps_url($row, ?string $title = null): ?string
+{
+    $overrideUrl = $row->map_google_url ?? null;
+    if ($overrideUrl) {
+        return $overrideUrl;
+    }
+
+    if (empty($row->map_lat) || empty($row->map_lng)) {
+        $address = $row->address ?? null;
+        if (is_string($address) && trim($address) !== '') {
+            return google_maps_search_url($address);
+        }
+
+        return null;
+    }
+
+    $title = $title
+        ?? (method_exists($row, 'translate') ? ($row->translate()->title ?? null) : null)
+        ?? ($row->title ?? null);
+
+    return google_maps_resolve_url(
+        $row->map_lat,
+        $row->map_lng,
+        $row->map_zoom ?? 18,
+        $title,
+        $overrideUrl
+    );
+}
+
+/**
+ * Resolve map coordinates from a user/vendor record.
+ *
+ * @return array{lat: float, lng: float, zoom: int}|null
+ */
+function vendor_profile_map_coordinates($user): ?array
+{
+    $lat = $user->map_lat ?? null;
+    $lng = $user->map_lng ?? null;
+    $zoom = $user->map_zoom ?? null;
+
+    if (method_exists($user, 'getMeta')) {
+        if (!is_numeric($lat)) {
+            $lat = $user->getMeta('map_lat') ?: $user->getMeta('latitude');
+        }
+        if (!is_numeric($lng)) {
+            $lng = $user->getMeta('map_lng') ?: $user->getMeta('longitude');
+        }
+        if (!is_numeric($zoom)) {
+            $zoom = $user->getMeta('map_zoom');
+        }
+    }
+
+    if (!is_numeric($lat) || !is_numeric($lng)) {
+        return null;
+    }
+
+    return [
+        'lat' => (float) $lat,
+        'lng' => (float) $lng,
+        'zoom' => max(14, min(21, (int) ($zoom ?: 18))),
+    ];
+}
+
+/**
+ * Vendor profile address parts for display (sidebar lines).
+ */
+function vendor_profile_address_lines($user): array
+{
+    return array_values(array_filter([
+        $user->address ?? null,
+        $user->address2 ?? null,
+        $user->city ?? null,
+        $user->state ?? null,
+        $user->zip_code ?? null,
+        !empty($user->country) ? get_country_name($user->country) : null,
+    ], fn ($line) => filled(trim((string) $line, " \t\n\r\0\x0B,"))));
+}
+
+/**
+ * Google Maps URL for a vendor/user profile (coordinates preferred).
+ */
+function vendor_profile_google_maps_url($user): ?string
+{
+    $overrideUrl = $user->map_google_url ?? null;
+    if (method_exists($user, 'getMeta') && empty($overrideUrl)) {
+        $overrideUrl = $user->getMeta('map_google_url') ?: null;
+    }
+
+    $coords = vendor_profile_map_coordinates($user);
+    if ($coords) {
+        $placeName = vendor_profile_place_name($user);
+
+        // Inherit exact Maps URL from vendor's published hotel when set
+        if (empty($overrideUrl) && class_exists(\Modules\Hotel\Models\Hotel::class)) {
+            $hotel = \Modules\Hotel\Models\Hotel::query()
+                ->where('author_id', $user->id)
+                ->where('status', 'publish')
+                ->whereNotNull('map_google_url')
+                ->orderByDesc('id')
+                ->value('map_google_url');
+            $overrideUrl = $hotel ?: null;
+        }
+
+        return google_maps_resolve_url(
+            $coords['lat'],
+            $coords['lng'],
+            $coords['zoom'],
+            $placeName,
+            $overrideUrl
+        );
+    }
+
+    if ($overrideUrl) {
+        return $overrideUrl;
+    }
+
+    $lines = vendor_profile_address_lines($user);
+    if (empty($lines)) {
+        return null;
+    }
+
+    $parts = array_map(
+        fn ($line) => trim((string) $line, " \t\n\r\0\x0B,"),
+        $lines
+    );
+
+    return google_maps_search_url(implode(', ', $parts));
+}
+
+/**
  * Add social-link classes to footer widget anchors (Facebook, Instagram, etc.).
  */
 function enrich_footer_social_links($html)
