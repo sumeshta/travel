@@ -186,20 +186,29 @@
 @include('Tour::frontend.layouts.details.tour-faqs')
 @includeIf("Hotel::frontend.layouts.details.hotel-surrounding")
 
-@if($row->map_lat && $row->map_lng)
+@if(($row->map_lat && $row->map_lng) || !empty($row->map_google_url))
 <div class="g-location">
     <div class="location-title">
         <h3>{{__("Tour Location")}}</h3>
-        @if($translation->address)
+        @if($translation->address || !empty($row->map_google_url))
+            @php $mapsUrl = bookable_google_maps_url($row, $translation->title ?? null); @endphp
             <div class="address">
                 <i class="icofont-location-arrow"></i>
-                {{$translation->address}}
+                @if($mapsUrl)
+                    <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer" class="user-address-google-link">
+                        {{ $translation->address ?: __('View on map') }}
+                    </a>
+                @else
+                    {{ $translation->address }}
+                @endif
             </div>
         @endif
     </div>
 
+    @if($row->map_lat && $row->map_lng)
     <div class="location-map">
         <div id="map_content"></div>
     </div>
+    @endif
 </div>
 @endif

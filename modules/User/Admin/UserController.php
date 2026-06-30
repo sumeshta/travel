@@ -218,7 +218,7 @@ class UserController extends AdminController
             'map_lat'=>$request->input('map_lat'),
             'map_lng'=>$request->input('map_lng'),
             'map_zoom'=>$request->input('map_zoom'),
-            'map_google_url'=>$request->input('map_google_url'),
+            'map_google_url'=>normalize_google_maps_place_url($request->input('map_google_url')),
             'website'=>$request->input('website'),
             'vendor_commission_type'=>$request->input('vendor_commission_type'),
             'vendor_commission_amount'=>$request->input('vendor_commission_amount'),

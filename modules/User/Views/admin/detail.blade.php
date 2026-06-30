@@ -124,8 +124,8 @@
                                         </div>
                                         <div class="map-google-url-field mt-3">
                                             <label>{{__("Google Maps place link")}}</label>
-                                            <input type="url" name="map_google_url" class="form-control" value="{{old('map_google_url',$row->map_google_url)}}" placeholder="https://www.google.com/maps/place/...">
-                                            <p class="help-block">{{__('Paste the full link from Google Maps → Share → Copy link (opens the exact business pin).')}}</p>
+                                            <input type="text" name="map_google_url" class="form-control" value="{{old('map_google_url',$row->map_google_url)}}" placeholder="https://maps.app.goo.gl/...">
+                                            <p class="help-block">{{__('Paste the share link from Google Maps (Share → Copy link), e.g. https://maps.app.goo.gl/...')}}</p>
                                         </div>
                                     </div>
                                 </div>

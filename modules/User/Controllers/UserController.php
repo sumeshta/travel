@@ -119,6 +119,7 @@ class UserController extends FrontendController
         ],$messages);
         $input = $request->except('bio');
         $user->fill($input);
+        $user->map_google_url = normalize_google_maps_place_url($request->input('map_google_url'));
         $user->bio = clean($request->input('bio'));
         $user->birthday = date("Y-m-d", strtotime($user->birthday));
         $user->user_name = Str::slug( $request->input('user_name') ,"_");

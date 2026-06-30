@@ -34,7 +34,7 @@
         </li>
     </ul>
     @endif
-    @if(setting_item('vendor_show_email') or setting_item('vendor_show_phone'))
+    @if(setting_item('vendor_show_email') or setting_item('vendor_show_phone') or vendor_profile_google_maps_url($user))
     @php
         $addressLines = vendor_profile_address_lines($user);
         $googleLocationUrl = vendor_profile_google_maps_url($user);
@@ -42,7 +42,7 @@
         $showEmail = setting_item('vendor_show_email') && $user->email;
         $showPhone = setting_item('vendor_show_phone') && $user->phone;
         $showWhatsapp = setting_item('vendor_show_phone') && ($user->whatsapp_code || $user->whatsapp);
-        $showAddress = (!empty($addressLines) || vendor_profile_map_coordinates($user)) && $googleLocationUrl;
+        $showAddress = (bool) $googleLocationUrl;
     @endphp
     <hr>
     @if($showEmail)

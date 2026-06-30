@@ -49,6 +49,7 @@ class Tour extends Bookable
         'map_lat',
         'map_lng',
         'map_zoom',
+        'map_google_url',
         'is_featured',
         'gallery',
         'video',

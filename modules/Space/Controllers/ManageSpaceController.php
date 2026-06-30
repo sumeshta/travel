@@ -177,6 +177,7 @@ class ManageSpaceController extends FrontendController
             'map_lat',
             'map_lng',
             'map_zoom',
+            'map_google_url',
             'default_state',
             'price',
             'sale_price',
@@ -199,6 +200,7 @@ class ManageSpaceController extends FrontendController
         apply_service_price_currency_to_request($request, ['price', 'sale_price']);
 
         $row->fillByAttr($dataKeys,$request->input());
+        $row->map_google_url = normalize_google_maps_place_url($request->input('map_google_url'));
         if(!auth()->user()->checkUserPlan() and $row->status == "publish") {
             return redirect(route('user.plan'));
         }

@@ -1098,6 +1098,36 @@ function get_currency_switcher_url($code = false){
 }
 
 /**
+ * Normalize a Google Maps share / place URL (supports maps.app.goo.gl short links).
+ */
+function normalize_google_maps_place_url(?string $url): ?string
+{
+    $url = trim((string) $url);
+    if ($url === '') {
+        return null;
+    }
+
+    if (!preg_match('#^https?://#i', $url)) {
+        $url = 'https://' . ltrim($url, '/');
+    }
+
+    $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+    $path = strtolower((string) (parse_url($url, PHP_URL_PATH) ?? ''));
+
+    $isGoogleMaps = in_array($host, [
+        'maps.app.goo.gl',
+        'maps.google.com',
+        'www.google.com',
+        'google.com',
+        'g.co',
+    ], true)
+        || ($host === 'goo.gl' && str_starts_with($path, '/maps'))
+        || (str_contains($host, 'google.') && str_contains($path, '/maps'));
+
+    return $isGoogleMaps ? $url : null;
+}
+
+/**
  * Build Google Maps search URL for a free-text address query.
  */
 function google_maps_search_url(string $query): ?string
@@ -1136,8 +1166,8 @@ function vendor_profile_place_name($user): ?string
  */
 function google_maps_resolve_url($lat, $lng, $zoom, ?string $placeName = null, ?string $overrideUrl = null): ?string
 {
-    $overrideUrl = trim((string) $overrideUrl);
-    if ($overrideUrl !== '' && preg_match('#^https?://#i', $overrideUrl)) {
+    $overrideUrl = normalize_google_maps_place_url($overrideUrl);
+    if ($overrideUrl) {
         return $overrideUrl;
     }
 
@@ -1196,7 +1226,7 @@ function google_maps_coords_url($lat, $lng, $zoom = 18, ?string $placeName = nul
  */
 function bookable_google_maps_url($row, ?string $title = null): ?string
 {
-    $overrideUrl = $row->map_google_url ?? null;
+    $overrideUrl = normalize_google_maps_place_url($row->map_google_url ?? null);
     if ($overrideUrl) {
         return $overrideUrl;
     }
@@ -1277,9 +1307,9 @@ function vendor_profile_address_lines($user): array
  */
 function vendor_profile_google_maps_url($user): ?string
 {
-    $overrideUrl = $user->map_google_url ?? null;
+    $overrideUrl = normalize_google_maps_place_url($user->map_google_url ?? null);
     if (method_exists($user, 'getMeta') && empty($overrideUrl)) {
-        $overrideUrl = $user->getMeta('map_google_url') ?: null;
+        $overrideUrl = normalize_google_maps_place_url($user->getMeta('map_google_url') ?: null);
     }
 
     $coords = vendor_profile_map_coordinates($user);
@@ -1294,7 +1324,7 @@ function vendor_profile_google_maps_url($user): ?string
                 ->whereNotNull('map_google_url')
                 ->orderByDesc('id')
                 ->value('map_google_url');
-            $overrideUrl = $hotel ?: null;
+            $overrideUrl = normalize_google_maps_place_url($hotel ?: null);
         }
 
         return google_maps_resolve_url(

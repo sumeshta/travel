@@ -153,11 +153,22 @@
 </div>
 @endif
 @includeIf("Hotel::frontend.layouts.details.hotel-surrounding")
-@if($row->map_lat && $row->map_lng)
+@if(($row->map_lat && $row->map_lng) || !empty($row->map_google_url))
 <div class="g-location">
     <h3>{{__("Location")}}</h3>
+    @php $mapsUrl = bookable_google_maps_url($row, $translation->title ?? null); @endphp
+    @if($mapsUrl && ($translation->address || empty($row->map_lat)))
+        <div class="address mb-2">
+            <i class="icofont-location-arrow"></i>
+            <a href="{{ $mapsUrl }}" target="_blank" rel="noopener noreferrer" class="user-address-google-link">
+                {{ $translation->address ?: __('View on map') }}
+            </a>
+        </div>
+    @endif
+    @if($row->map_lat && $row->map_lng)
     <div class="location-map">
         <div id="map_content"></div>
     </div>
+    @endif
 </div>
 @endif
