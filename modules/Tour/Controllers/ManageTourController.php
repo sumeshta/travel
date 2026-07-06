@@ -205,6 +205,7 @@ class ManageTourController extends FrontendController
             'map_lat',
             'map_lng',
             'map_zoom',
+            'map_google_url',
             'gallery',
             'video',
             'default_state',
@@ -230,6 +231,7 @@ class ManageTourController extends FrontendController
             'website',
 
         ], $request->input());
+        $row->map_google_url = normalize_google_maps_place_url($request->input('map_google_url'));
 
         if(!auth()->user()->checkUserPlan() and $row->status == "publish") {
             return redirect(route('user.plan'));

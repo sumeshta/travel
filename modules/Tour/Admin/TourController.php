@@ -226,6 +226,7 @@ class TourController extends AdminController
         apply_service_price_currency_to_request($request, ['price', 'sale_price']);
 
         $row->fill($request->input());
+        $row->map_google_url = normalize_google_maps_place_url($request->input('map_google_url'));
         if ($request->input('slug')) {
             $row->slug = $request->input('slug');
         }

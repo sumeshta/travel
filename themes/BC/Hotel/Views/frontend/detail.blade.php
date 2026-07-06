@@ -41,6 +41,7 @@
     
      jQuery(function ($) {
     @if($row->map_lat && $row->map_lng)
+    @php $hotelMapsUrl = bookable_google_maps_url($row, $translation->title ?? $row->title ?? null); @endphp
     new BravoMapEngine('map_content', {
         disableScripts: true,
         fitBounds: true,
@@ -70,8 +71,8 @@
         <div class="popup-item" style="text-align: left;">
             <strong>${locationName}</strong><br>
             ${address}<br>
-            <a href="https://maps.google.com/?q=${lat},${lng}" target="_blank">View larger map</a><br>
-            <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank">Directions</a><br>
+            <a href="{{ $hotelMapsUrl ?? '' }}" target="_blank" rel="noopener noreferrer">View larger map</a><br>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank" rel="noopener noreferrer">Directions</a><br>
         </div>
     </div>
 `;

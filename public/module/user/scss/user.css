@@ -830,7 +830,8 @@
         border: 1px solid rgba(195, 207, 216, 0.3);
         background: #fafbfc; }
   .bravo_wrap .bravo_user_profile .control-map-group {
-    position: relative; }
+    position: relative;
+    min-height: 300px; }
     .bravo_wrap .bravo_user_profile .control-map-group #map_content {
       margin-right: 270px;
       height: 300px; }
@@ -851,6 +852,9 @@
       .bravo_wrap .bravo_user_profile .control-map-group .g-control label {
         min-width: 75px;
         display: inline-block; }
+    .bravo_wrap .bravo_user_profile .map-google-url-field label {
+      display: block;
+      margin-bottom: 5px; }
   .bravo_wrap .bravo_user_profile .badge {
     font-size: 12px;
     text-transform: capitalize;

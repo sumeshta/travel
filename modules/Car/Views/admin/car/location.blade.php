@@ -78,6 +78,11 @@
                         </div>
                     </div>
                 </div>
+                <div class="map-google-url-field mt-3">
+                    <label>{{__("Google Maps place link")}}</label>
+                    <input type="text" name="map_google_url" class="form-control" value="{{$row->map_google_url ?? ''}}" placeholder="https://maps.app.goo.gl/...">
+                    <p class="help-block">{{__('Paste the share link from Google Maps (Share → Copy link), e.g. https://maps.app.goo.gl/...')}}</p>
+                </div>
             </div>
         @endif
     </div>

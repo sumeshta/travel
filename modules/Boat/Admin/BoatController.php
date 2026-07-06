@@ -215,6 +215,7 @@ class BoatController extends AdminController
             'map_lat',
             'map_lng',
             'map_zoom',
+            'map_google_url',
             'price_per_hour',
             'price_per_day',
             'price_currency',
@@ -242,6 +243,7 @@ class BoatController extends AdminController
         }
         apply_service_price_currency_to_request($request, ['price_per_hour', 'price_per_day']);
         $row->fillByAttr($dataKeys, $request->input());
+        $row->map_google_url = normalize_google_maps_place_url($request->input('map_google_url'));
         if ($request->input('slug')) {
             $row->slug = $request->input('slug');
         }
