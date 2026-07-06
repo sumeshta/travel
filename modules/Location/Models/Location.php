@@ -41,6 +41,82 @@
             return __("Location");
         }
 
+        /**
+         * Resolve a service location: reuse an existing row (any status) or create a draft.
+         * Draft locations are not shown in public search until an admin publishes them.
+         */
+        public static function resolveForService($locationId = null, $locationName = null, $mapLat = null, $mapLng = null)
+        {
+            if (!empty($locationId)) {
+                $existing = static::query()->where('id', $locationId)->first();
+                if ($existing) {
+                    return $existing->id;
+                }
+            }
+
+            $name = trim((string) $locationName);
+            if ($name === '') {
+                return null;
+            }
+
+            // Strip tree prefixes that may appear in the smart-search display value.
+            $name = trim(preg_replace('/^[\-\s]+/', '', $name));
+            if ($name === '') {
+                return null;
+            }
+
+            $existing = static::query()
+                ->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])
+                ->first();
+            if ($existing) {
+                return $existing->id;
+            }
+
+            $location = new static();
+            $location->name = $name;
+            $location->status = 'draft';
+            $location->map_lat = $mapLat ?: null;
+            $location->map_lng = $mapLng ?: null;
+            $location->map_zoom = 12;
+            $location->save();
+
+            return $location->id;
+        }
+
+        /** @deprecated Use resolveForService() */
+        public static function resolveForHotel($locationId = null, $locationName = null, $mapLat = null, $mapLng = null)
+        {
+            return static::resolveForService($locationId, $locationName, $mapLat, $mapLng);
+        }
+
+        public static function isPublished($locationId): bool
+        {
+            if (empty($locationId)) {
+                return false;
+            }
+            return static::query()
+                ->where('id', $locationId)
+                ->where('status', 'publish')
+                ->exists();
+        }
+
+        /**
+         * Keep listings with draft/unpublished locations out of public search.
+         */
+        public static function applyPublishedLocationFilter($query, string $table)
+        {
+            return $query->where(function ($q) use ($table) {
+                $q->whereNull("{$table}.location_id")
+                    ->orWhereExists(function ($sub) use ($table) {
+                        $sub->selectRaw('1')
+                            ->from('bravo_locations')
+                            ->whereColumn('bravo_locations.id', "{$table}.location_id")
+                            ->where('bravo_locations.status', 'publish')
+                            ->whereNull('bravo_locations.deleted_at');
+                    });
+            });
+        }
+
         public static function searchForMenu($q = false)
         {
             $query = static::select('id', 'name');

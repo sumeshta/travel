@@ -83,12 +83,8 @@ class  FormSearchTour extends BaseBlock
 
     public function content($model = [])
     {
-        $limit_location = 15;
-        if( empty(setting_item("tour_location_search_style")) or setting_item("tour_location_search_style") == "normal" ){
-            $limit_location = 1000;
-        }
         $data = [
-            'tour_location' => Location::where("status","publish")->limit($limit_location)->with(['translation'])->get()->toTree(),
+            'tour_location' => Location::where("status","publish")->limit(1000)->with(['translation'])->get()->toTree(),
             'bg_image_url'  => '',
         ];
         $data = array_merge($model, $data);

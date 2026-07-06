@@ -486,33 +486,91 @@
 
     GmapEngine.prototype.searchBox = function (classSearchBox ,func) {
         var me = this;
-        var searchBox = new google.maps.places.SearchBox(classSearchBox[0]);
-        google.maps.event.addListener(searchBox, 'places_changed', function() {
-            var places = searchBox.getPlaces();
-            if (places.length == 0) {
+        var input = classSearchBox && classSearchBox.length ? classSearchBox[0] : null;
+        if (!input || typeof google === 'undefined' || !google.maps || !google.maps.places) {
+            return null;
+        }
+
+        // Autocomplete works without a visible map (e.g. inputs in hidden tabs).
+        var autocomplete = new google.maps.places.Autocomplete(input, {
+            fields: ['geometry', 'name', 'formatted_address', 'address_components']
+        });
+        autocomplete.addListener('place_changed', function () {
+            var place = autocomplete.getPlace();
+            if (!place || !place.geometry || !place.geometry.location) {
                 return;
             }
-            var bounds = new google.maps.LatLngBounds();
-            for (var i = 0, place ; place = places[i]; i++) {
-                if (!place.geometry) {
-                    console.log("Returned place contains no geometry");
-                    return;
-                }
+            var lat = place.geometry.location.lat();
+            var lng = place.geometry.location.lng();
+            if (me.map) {
                 if (place.geometry.viewport) {
-                    bounds.union(place.geometry.viewport);
+                    me.map.fitBounds(place.geometry.viewport);
                 } else {
-                    bounds.extend(place.geometry.location);
-                }
-                if(i===0){
-                    func([
-                        place.geometry.location.lat(),
-                        place.geometry.location.lng(),
-                        me.map.getZoom()]
-                    );
+                    me.map.setCenter({ lat: lat, lng: lng });
                 }
             }
-            me.map.fitBounds(bounds);
+            if (typeof func === 'function') {
+                func([lat, lng, me.map ? me.map.getZoom() : 12], place);
+            }
         });
-    }
+        return autocomplete;
+    };
+
+    /**
+     * Bind Google Places Autocomplete to an input without requiring a map instance.
+     */
+    window.bravoBindPlacesAutocomplete = function (input, options) {
+        options = options || {};
+        var el = input;
+        if (typeof input === 'string') {
+            el = document.querySelector(input);
+        } else if (input && input.jquery) {
+            el = input[0];
+        }
+        if (!el || typeof google === 'undefined' || !google.maps || !google.maps.places) {
+            return null;
+        }
+        if (el.dataset && el.dataset.placesBound === '1') {
+            return el._bravoPlacesAutocomplete || null;
+        }
+        var acOptions = {
+            fields: options.fields || ['geometry', 'name', 'formatted_address', 'address_components']
+        };
+        if (options.types) {
+            acOptions.types = options.types;
+        }
+        var autocomplete = new google.maps.places.Autocomplete(el, acOptions);
+        if (el.dataset) {
+            el.dataset.placesBound = '1';
+        }
+        el._bravoPlacesAutocomplete = autocomplete;
+        autocomplete.addListener('place_changed', function () {
+            var place = autocomplete.getPlace();
+            if (!place || !place.geometry || !place.geometry.location) {
+                return;
+            }
+            if (typeof options.onPlace === 'function') {
+                options.onPlace(place, {
+                    lat: place.geometry.location.lat(),
+                    lng: place.geometry.location.lng()
+                });
+            }
+        });
+        return autocomplete;
+    };
+
+    window.bravoWhenGooglePlacesReady = function (callback, tries) {
+        tries = typeof tries === 'number' ? tries : 40;
+        if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+            callback();
+            return;
+        }
+        if (tries <= 0) {
+            return;
+        }
+        setTimeout(function () {
+            window.bravoWhenGooglePlacesReady(callback, tries - 1);
+        }, 250);
+    };
 
 })(jQuery);

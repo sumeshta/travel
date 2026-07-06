@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @push('css')
     <link href="{{ asset('dist/frontend/module/space/css/space.css?_ver='.config('app.asset_version')) }}" rel="stylesheet">
+    <link href="{{ asset('css/service-search-form.css?_ver='.config('app.asset_version')) }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/ion_rangeslider/css/ion.rangeSlider.min.css") }}"/>
 @endpush
 @section('content')

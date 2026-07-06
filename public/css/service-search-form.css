@@ -1,0 +1,237 @@
+/* Service search forms: Stay, Tourist Vehicle, Travel Agent - v3.4.3 */
+
+/* Desktop: spread fields evenly across full search bar width */
+@media (min-width: 1024px) {
+  .bravo_search_hotel .hotel-search-form .hotel-search-row,
+  .bravo_search_car .car-search-form .car-search-row,
+  .bravo_search_space .space-search-form .space-search-row {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    margin: 0;
+  }
+  .bravo_search_hotel .hotel-search-form .hotel-search-row > .hotel-search-field,
+  .bravo_search_car .car-search-form .car-search-row > .car-search-field,
+  .bravo_search_space .space-search-form .space-search-row > .space-search-field {
+    flex: 1 1 0;
+    max-width: none !important;
+    width: auto !important;
+    padding: 0;
+  }
+  .bravo_search_hotel .hotel-search-form .g-field-search,
+  .bravo_search_car .car-search-form .g-field-search,
+  .bravo_search_space .space-search-form .g-field-search {
+    width: 100%;
+  }
+}
+
+.bravo_search_hotel .hotel-search-form .form-group,
+.bravo_search_car .car-search-form .form-group,
+.bravo_search_space .space-search-form .form-group {
+  position: relative;
+}
+
+.bravo_search_hotel .hotel-search-form .field-icon,
+.bravo_search_car .car-search-form .field-icon,
+.bravo_search_space .space-search-form .field-icon {
+  left: 15px;
+  top: 50%;
+  margin-top: 0;
+  transform: translateY(-50%);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.bravo_search_hotel .hotel-search-form .form-content,
+.bravo_search_car .car-search-form .form-content,
+.bravo_search_space .space-search-form .form-content {
+  padding: 20px 15px 10px 50px;
+}
+
+.bravo_search_hotel .hotel-search-form .input-search,
+.bravo_search_car .car-search-form .input-search,
+.bravo_search_space .space-search-form .input-search {
+  position: relative;
+}
+
+.bravo_search_hotel .hotel-search-form .g-map-place .form-control[name="map_place"],
+.bravo_search_hotel .hotel-search-form .hotel-service-name-input,
+.bravo_search_hotel .hotel-search-form .smart-search .form-control,
+.bravo_search_car .car-search-form .g-map-place .form-control[name="map_place"],
+.bravo_search_car .car-search-form .form-control[name="service_name"],
+.bravo_search_car .car-search-form .smart-search .form-control,
+.bravo_search_space .space-search-form .g-map-place .form-control[name="map_place"],
+.bravo_search_space .space-search-form .form-control[name="service_name"],
+.bravo_search_space .space-search-form .smart-search .form-control {
+  padding-right: 30px !important;
+  padding-left: 0 !important;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  height: auto;
+  min-height: 22px;
+}
+
+.bravo_search_hotel .hotel-service-suggestions,
+.bravo_search_car .car-search-form .suggestions-list,
+.bravo_search_space .space-search-form .suggestions-list {
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  z-index: 1000;
+  background: #fff;
+  width: 100%;
+  left: 0;
+  top: 100%;
+}
+
+.bravo_search_hotel .hotel-service-suggestions .suggestion-item,
+.bravo_search_car .car-search-form .suggestion-item,
+.bravo_search_space .space-search-form .suggestion-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.bravo_search_hotel .hotel-service-suggestions .suggestion-item:hover,
+.bravo_search_car .car-search-form .suggestion-item:hover,
+.bravo_search_space .space-search-form .suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
+.bravo-use-current-location {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #5191fa;
+  padding: 0;
+  line-height: 1;
+  z-index: 2;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.g-map-place.is-locating .bravo-use-current-location {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@media (max-width: 1023px) {
+  .bravo_search_hotel .hotel-search-form.bravo_form,
+  .bravo_search_car .car-search-form.bravo_form,
+  .bravo_search_space .space-search-form.bravo_form {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .bravo_search_hotel .hotel-search-form .hotel-search-field-date,
+  .bravo_search_hotel .hotel-search-form .hotel-search-field-guests,
+  .bravo_search_space .space-search-form .space-search-field-date,
+  .bravo_search_space .space-search-form .space-search-field-guests,
+  .bravo_search_car .car-search-form .car-search-field-date {
+    display: none !important;
+  }
+
+  .bravo_search_hotel .hotel-search-form .g-field-search,
+  .bravo_search_car .car-search-form .g-field-search,
+  .bravo_search_space .space-search-form .g-field-search {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 15px;
+  }
+
+  .bravo_search_hotel .hotel-search-form .hotel-search-row,
+  .bravo_search_car .car-search-form .car-search-row,
+  .bravo_search_space .space-search-form .space-search-row {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    margin: 0;
+  }
+
+  .bravo_search_hotel .hotel-search-form .hotel-search-row > [class*="col-"],
+  .bravo_search_car .car-search-form .car-search-row > [class*="col-"],
+  .bravo_search_space .space-search-form .space-search-row > [class*="col-"] {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0;
+    border-right: none !important;
+  }
+
+  .bravo_search_hotel .hotel-search-form .hotel-search-field-location,
+  .bravo_search_car .car-search-form .car-search-field-location,
+  .bravo_search_space .space-search-form .space-search-field-location {
+    order: 1;
+  }
+
+  .bravo_search_hotel .hotel-search-form .hotel-search-field-service_name,
+  .bravo_search_car .car-search-form .car-search-field-service_name,
+  .bravo_search_space .space-search-form .space-search-field-service_name {
+    order: 2;
+  }
+
+  .bravo_search_hotel .hotel-search-form .form-group,
+  .bravo_search_car .car-search-form .form-group,
+  .bravo_search_space .space-search-form .form-group {
+    border-bottom: 1px solid #D7DCE3 !important;
+  }
+
+  .bravo_search_hotel .hotel-search-form .form-content,
+  .bravo_search_car .car-search-form .form-content,
+  .bravo_search_space .space-search-form .form-content {
+    padding: 16px 15px 12px 50px;
+  }
+
+  .bravo_search_hotel .hotel-search-form .field-icon,
+  .bravo_search_car .car-search-form .field-icon,
+  .bravo_search_space .space-search-form .field-icon {
+    font-size: 26px;
+  }
+
+  .bravo_search_hotel .hotel-search-form label,
+  .bravo_search_car .car-search-form label,
+  .bravo_search_space .space-search-form label {
+    font-size: 13px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .bravo_search_hotel .hotel-search-form .g-map-place .form-control,
+  .bravo_search_hotel .hotel-search-form .hotel-service-name-input,
+  .bravo_search_car .car-search-form .g-map-place .form-control,
+  .bravo_search_car .car-search-form .form-control[name="service_name"],
+  .bravo_search_space .space-search-form .g-map-place .form-control,
+  .bravo_search_space .space-search-form .form-control[name="service_name"] {
+    font-size: 15px;
+    padding: 0 30px 0 0 !important;
+    width: 100%;
+  }
+
+  .bravo_search_hotel .hotel-search-form .g-button-submit,
+  .bravo_search_car .car-search-form .g-button-submit,
+  .bravo_search_space .space-search-form .g-button-submit {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    text-align: right;
+    padding: 0 15px 12px;
+  }
+
+  .bravo_search_hotel .hotel-search-form .g-button-submit .btn-search,
+  .bravo_search_car .car-search-form .g-button-submit .btn-search,
+  .bravo_search_space .space-search-form .g-button-submit .btn-search {
+    display: inline-block;
+    width: auto;
+    height: auto;
+    margin: 8px 0 0;
+    border-radius: 5px;
+    padding: 9px 22px;
+    font-size: 14px;
+  }
+}

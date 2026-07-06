@@ -361,7 +361,7 @@ class RunUpdater
             DB::table('core_settings')->insert(
                 [
                     'name'  => 'space_search_fields',
-                    'val'   => '[{"title":"Location","field":"location","size":"4","position":"1"},{"title":"From - To","field":"date","size":"4","position":"2"},{"title":"Guests","field":"guests","size":"4","position":"3"}]',
+                    'val'   => '[{"title":"Location","field":"location","size":"4","position":"1"},{"title":"List Name","field":"service_name","size":"4","position":"2"}]',
                     'group' => 'tour'
                 ]
             );
@@ -370,7 +370,7 @@ class RunUpdater
             DB::table('core_settings')->insert(
                 [
                     'name'  => 'hotel_search_fields',
-                    'val'   => '[{"title":"Location","field":"location","size":"4","position":"1"},{"title":"Check In - Out","field":"date","size":"4","position":"2"},{"title":"Guests","field":"guests","size":"4","position":"3"}]',
+                    'val'   => '[{"title":"Location","field":"location","size":"6","position":"1"},{"title":"List Name","field":"service_name","size":"6","position":"2"}]',
                     'group' => 'hotel'
                 ]
             );
@@ -379,7 +379,7 @@ class RunUpdater
             DB::table('core_settings')->insert(
                 [
                     'name'  => 'car_search_fields',
-                    'val'   => '[{"title":"Location","field":"location","size":"6","position":"1"},{"title":"From - To","field":"date","size":"6","position":"2"}]',
+                    'val'   => '[{"title":"Location","field":"location","size":"6","position":"1"},{"title":"List Name","field":"service_name","size":"6","position":"2"}]',
                     'group' => 'car'
                 ]
             );

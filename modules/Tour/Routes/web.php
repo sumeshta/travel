@@ -32,6 +32,8 @@ Route::group(['prefix'=>'user/'.config('tour.tour_route_prefix')],function(){
 });
 
 Route::get('/tout/search/services', '\Modules\Tour\Controllers\TourController@searchServices')->name('tourservices.search');
+Route::get('/tour/search/destinations', '\Modules\Tour\Controllers\TourController@searchDestinations')->name('tour.destination.search');
+Route::get('/tour/search/departures', '\Modules\Tour\Controllers\TourController@searchDepartures')->name('tour.departure.search');
 // Tour
 Route::group(['prefix'=>config('tour.tour_route_prefix')],function(){
     Route::get('/','\Modules\Tour\Controllers\TourController@index')->name('tour.search'); // Search

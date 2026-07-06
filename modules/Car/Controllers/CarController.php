@@ -135,14 +135,31 @@ class CarController extends Controller
     }
     
     
-        public function searchServices(Request $request)
-{
-    $query = $request->get('query');
+    public function searchServices(Request $request)
+    {
+        $query = trim((string) $request->get('query', ''));
+        if ($query === '') {
+            return response()->json([]);
+        }
 
-    $services = Car::where('title', 'LIKE', "{$query}%")
-        ->take(5) 
-        ->get();
+        $services = Car::query()
+            ->select('bravo_cars.id', 'bravo_cars.title')
+            ->where('bravo_cars.status', 'publish')
+            ->where(function ($nameQuery) use ($query) {
+                $nameQuery->where('bravo_cars.title', 'LIKE', '%' . $query . '%');
+                if (setting_item('site_enable_multi_lang')) {
+                    $nameQuery->orWhereExists(function ($sub) use ($query) {
+                        $sub->selectRaw('1')
+                            ->from('bravo_car_translations')
+                            ->whereColumn('bravo_car_translations.origin_id', 'bravo_cars.id')
+                            ->where('bravo_car_translations.title', 'LIKE', '%' . $query . '%');
+                    });
+                }
+            })
+            ->orderBy('bravo_cars.title')
+            ->take(10)
+            ->get();
 
-    return response()->json($services);
-}
+        return response()->json($services);
+    }
 }

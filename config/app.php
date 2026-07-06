@@ -229,7 +229,7 @@ return [
     ])->toArray(),
 
     'version'=>"3.4.0",
-    'asset_version'=>env('APP_ASSET_VERSION','3.4.0'),
+    'asset_version'=>env('APP_ASSET_VERSION','3.4.2'),
 
     'cache_clear_token' => env('CACHE_CLEAR_TOKEN', ''),
 

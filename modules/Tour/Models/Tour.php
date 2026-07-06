@@ -990,6 +990,7 @@ class Tour extends Bookable
     { 
         $model_Tour = parent::query()->select("bravo_tours.*");
         $model_Tour->where("bravo_tours.status", "publish");
+        Location::applyPublishedLocationFilter($model_Tour, 'bravo_tours');
         if (!empty($location_id = $request['location_id'] ?? "" )) {
             $location = Location::where('id', $location_id)->where("status", "publish")->first();
             if (!empty($location)) {
@@ -1035,12 +1036,20 @@ class Tour extends Bookable
         }
 
         if (!empty($departure = $request['departure'] ?? '')) {
-            $model_Tour->where('bravo_tours.departure', 'LIKE', '%' . $departure . '%');
+            // Tour start: match departure field and package title (routes often appear in the name).
+            $model_Tour->where(function ($q) use ($departure) {
+                $q->where('bravo_tours.departure', 'LIKE', '%' . $departure . '%')
+                    ->orWhere('bravo_tours.title', 'LIKE', '%' . $departure . '%');
+            });
         }
         if (!empty($destination = $request['destination'] ?? '')) {
-            $model_Tour->where('bravo_tours.destination', 'LIKE', '%' . $destination . '%');
+            // Tour destination: match destination field and package title (e.g. "Palani – Madurai – Rameswaram").
+            $model_Tour->where(function ($q) use ($destination) {
+                $q->where('bravo_tours.destination', 'LIKE', '%' . $destination . '%')
+                    ->orWhere('bravo_tours.title', 'LIKE', '%' . $destination . '%');
+            });
         }
-        if (!empty($service_name = $request['service_name'] ?? [])) {
+        if (!empty($service_name = $request['service_name'] ?? '')) {
             if (setting_item('site_enable_multi_lang') && setting_item('site_locale') != app()->getLocale()) {
                 $model_Tour->leftJoin('bravo_tour_translations', function ($join) {
                     $join->on('bravo_tours.id', '=', 'bravo_tour_translations.origin_id');

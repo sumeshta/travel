@@ -9,8 +9,11 @@ class MapEngine
 
         $html = '';
         switch (setting_item('map_provider')) {
-            case "gmap": 
-                $html .= sprintf("<script src='https://maps.googleapis.com/maps/api/js?key=%s&libraries=places'></script>", env('MAP_GMAP_KEY'));
+            case "gmap":
+                $gmapKey = setting_item('map_gmap_key') ?: env('MAP_GMAP_KEY');
+                if (!empty($gmapKey)) {
+                    $html .= sprintf("<script src='https://maps.googleapis.com/maps/api/js?key=%s&libraries=places'></script>", e($gmapKey));
+                }
 
                 $html .= sprintf("<script src='https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js'></script>");
                 $html .= sprintf("<script src='%s'></script>", url('libs/infobox.js'));

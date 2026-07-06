@@ -193,6 +193,16 @@ class ManageTourController extends FrontendController
         }
         apply_service_price_currency_to_request($request, ['price', 'sale_price']);
 
+        if (is_default_lang($request->input('lang'))) {
+            $resolvedLocationId = Location::resolveForService(
+                $request->input('location_id'),
+                $request->input('location_name'),
+                $request->input('map_lat'),
+                $request->input('map_lng')
+            );
+            $request->merge(['location_id' => $resolvedLocationId]);
+        }
+
         $row->fillByAttr([
             'title',
             'content',
@@ -242,11 +252,15 @@ class ManageTourController extends FrontendController
                 $row->saveMeta($request);
             }
             do_action(Hook::AFTER_SAVING,$row,$request);
+            $locationPending = $row->location_id && !Location::isPublished($row->location_id);
+            $pendingMsg = $locationPending
+                ? ' ' . __('Location is pending admin approval and will appear in search after it is published.')
+                : '';
             if ($id > 0) {
-                return back()->with('success', __('Tour updated'));
+                return back()->with('success', __('Tour updated') . $pendingMsg);
             } else {
                 event(new CreatedServicesEvent($row));
-                return redirect(route('tour.vendor.edit', ['id' => $row->id]))->with('success', __('Tour created'));
+                return redirect(route('tour.vendor.edit', ['id' => $row->id]))->with('success', __('Tour created') . $pendingMsg);
             }
         }
     }

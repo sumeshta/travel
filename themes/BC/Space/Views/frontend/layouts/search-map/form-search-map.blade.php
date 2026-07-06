@@ -2,8 +2,15 @@
     <input type="hidden" name="_layout" value="{{$layout ?? ''}}">
     @php $space_map_search_fields = setting_item_array('space_map_search_fields');
 
+    $space_map_search_fields = array_values(array_filter($space_map_search_fields, function ($field) {
+        return ($field['field'] ?? '') !== 'date';
+    }));
     $space_map_search_fields = array_values(\Illuminate\Support\Arr::sort($space_map_search_fields, function ($value) {
-        return $value['position'] ?? 0;
+        $field = $value['field'] ?? '';
+        if ($field === 'location') {
+            return 0;
+        }
+        return (int) ($value['position'] ?? 0) + 1;
     }));
 
     @endphp

@@ -19,8 +19,10 @@
                             @php
                             $tour_search_fields = setting_item_array('tour_search_fields');
                             $types = [
-                                'service_name'=>__("Service name"),
-                                'location'=>__("Location"),
+                                'location'=>__("Location (Tour Start)"),
+                                'destination'=>__("Tour Destination"),
+                                'list_name'=>__("List Name"),
+                                'service_name'=>__("List Name (legacy)"),
                                 //'category'=>__("Category"),
                                 'attr'=>__("Attribute"),
                                 'date'=>__("Date"),

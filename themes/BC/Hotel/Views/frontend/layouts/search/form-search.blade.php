@@ -2,14 +2,23 @@
     <div class="g-field-search">
         <div class="row no-gutters hotel-search-row">
             @php $hotel_search_fields = setting_item_array('hotel_search_fields');
-            $hotel_search_fields = array_values(\Illuminate\Support\Arr::sort($hotel_search_fields, function ($value) {
-                return $value['position'] ?? 0;
+            $hotel_search_fields = array_values(array_filter($hotel_search_fields, function ($field) {
+                return !in_array($field['field'] ?? '', ['date', 'guests'], true);
             }));
+            $hotel_search_fields = array_values(\Illuminate\Support\Arr::sort($hotel_search_fields, function ($value) {
+                $field = $value['field'] ?? '';
+                if ($field === 'location') {
+                    return 0;
+                }
+                return (int) ($value['position'] ?? 0) + 1;
+            }));
+            $hotelFieldCount = count($hotel_search_fields);
+            $hotelColSize = $hotelFieldCount > 0 ? (int) floor(12 / $hotelFieldCount) : 6;
             @endphp
             @if(!empty($hotel_search_fields))
                 @foreach($hotel_search_fields as $field)
                     @php $field['title'] = $field['title_'.app()->getLocale()] ?? $field['title'] ?? "" @endphp
-                    <div class="col-md-{{ $field['size'] ?? "6" }} border-right hotel-search-field hotel-search-field-{{ $field['field'] }}">
+                    <div class="col-md-{{ $hotelColSize }} border-right hotel-search-field hotel-search-field-{{ $field['field'] }}">
                         @switch($field['field'])
                             @case ('service_name')
                                 @include('Hotel::frontend.layouts.search.fields.service_name')
@@ -37,109 +46,13 @@
     </div>
 </form>
 
-@push('css')
-<style>
-    .bravo_search_hotel .hotel-service-suggestions {
-        border: 1px solid #ccc;
-        max-height: 200px;
-        overflow-y: auto;
-        position: absolute;
-        z-index: 1000;
-        background: #fff;
-        width: 100%;
-        left: 0;
-        top: 100%;
-    }
-    .bravo_search_hotel .hotel-service-suggestions .suggestion-item {
-        padding: 10px;
-        cursor: pointer;
-    }
-    .bravo_search_hotel .hotel-service-suggestions .suggestion-item:hover {
-        background-color: #f0f0f0;
-    }
-    @media (max-width: 1023px) {
-        .bravo_search_hotel .hotel-search-form.bravo_form {
-            display: flex;
-            flex-direction: column;
-            flex-wrap: nowrap;
-        }
-        .bravo_search_hotel .hotel-search-form .hotel-search-field-date,
-        .bravo_search_hotel .hotel-search-form .hotel-search-field-guests {
-            display: none !important;
-        }
-        .bravo_search_hotel .hotel-search-form .g-field-search {
-            flex: 0 0 100% !important;
-            max-width: 100% !important;
-            width: 100%;
-            padding: 0 15px;
-        }
-        .bravo_search_hotel .hotel-search-form .hotel-search-row {
-            display: flex;
-            flex-direction: column;
-            flex-wrap: nowrap;
-            margin: 0;
-        }
-        .bravo_search_hotel .hotel-search-form .hotel-search-row > [class*="col-"] {
-            flex: 0 0 100% !important;
-            max-width: 100% !important;
-            width: 100%;
-            padding: 0;
-            border-right: none !important;
-        }
-        .bravo_search_hotel .hotel-search-form .hotel-search-field-service_name {
-            order: 1;
-        }
-        .bravo_search_hotel .hotel-search-form .hotel-search-field-location {
-            order: 2;
-        }
-        .bravo_search_hotel .hotel-search-form .form-group {
-            position: relative;
-            border-bottom: 1px solid #D7DCE3 !important;
-        }
-        .bravo_search_hotel .hotel-search-form .form-content {
-            padding: 16px 10px 12px 44px;
-        }
-        .bravo_search_hotel .hotel-search-form .field-icon {
-            left: 10px;
-            font-size: 28px;
-            margin-top: -14px;
-        }
-        .bravo_search_hotel .hotel-search-form label {
-            font-size: 13px;
-            display: block;
-            margin-bottom: 4px;
-        }
-        .bravo_search_hotel .hotel-search-form .g-map-place .form-control,
-        .bravo_search_hotel .hotel-search-form .smart-search .form-control,
-        .bravo_search_hotel .hotel-search-form .hotel-service-name-input {
-            font-size: 15px;
-            padding: 0 !important;
-            height: auto;
-            min-height: 22px;
-            width: 100%;
-            border: none;
-            box-shadow: none;
-            background: transparent;
-        }
-        .bravo_search_hotel .hotel-search-form .g-button-submit {
-            flex: 0 0 100% !important;
-            max-width: 100% !important;
-            width: 100%;
-            text-align: right;
-            padding: 0 15px 12px;
-        }
-        .bravo_search_hotel .hotel-search-form .g-button-submit .btn-search {
-            display: inline-block;
-            width: auto;
-            height: auto;
-            margin: 8px 0 0;
-            border-radius: 5px;
-            padding: 9px 22px;
-            font-size: 14px;
-        }
-    }
+<link rel="stylesheet" href="{{ asset('css/service-search-form.css?_ver='.config('app.asset_version')) }}">
+<style id="hotel-search-form-critical">
+@media (min-width:1024px){
+.bravo_search_hotel .hotel-search-form .hotel-search-row{display:flex!important;flex-wrap:nowrap!important;width:100%!important;margin:0!important}
+.bravo_search_hotel .hotel-search-form .hotel-search-row>.hotel-search-field{flex:1 1 0!important;max-width:none!important;width:auto!important;padding:0!important}
+}
 </style>
-@endpush
 
 @push('js')
 <script>
