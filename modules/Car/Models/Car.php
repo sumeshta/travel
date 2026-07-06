@@ -842,6 +842,7 @@ class Car extends Bookable
     {
         $query = parent::query()->select("bravo_cars.*");
         $query->where("bravo_cars.status", "publish");
+        Location::applyPublishedLocationFilter($query, 'bravo_cars');
         if (!empty($location_id = $request['location_id'] ?? "" )) {
             $location = Location::query()->where('id', $location_id)->where("status","publish")->first();
             if(!empty($location)){
@@ -855,8 +856,8 @@ class Car extends Bookable
         if (!empty($price_range = $request['price_range'] ?? "")) {
             $pri_from = Currency::convertPriceToMain(explode(";", $price_range)[0]);
             $pri_to =  Currency::convertPriceToMain(explode(";", $price_range)[1]);
-            $raw_sql_min_max = "( (IFNULL(bravo_cars.sale_price,0) > 0 and bravo_cars.sale_price >= ? ) OR (IFNULL(bravo_cars.sale_price,0) <= 0 and bravo_cars.price >= ? ) )
-                            AND ( (IFNULL(bravo_cars.sale_price,0) > 0 and bravo_cars.sale_price <= ? ) OR (IFNULL(bravo_cars.sale_price,0) <= 0 and bravo_cars.price <= ? ) )";
+            $raw_sql_min_max = "( (IFNULL(bravo_cars.sale_price,0) > 0 and bravo_cars.sale_price >= ? ) OR (IFNULL(bravo_cars.sale_price,0) <= 0 and IFNULL(bravo_cars.price,0) >= ? ) )
+                            AND ( (IFNULL(bravo_cars.sale_price,0) > 0 and bravo_cars.sale_price <= ? ) OR (IFNULL(bravo_cars.sale_price,0) <= 0 and IFNULL(bravo_cars.price,0) <= ? ) )";
             $query->WhereRaw($raw_sql_min_max,[$pri_from,$pri_from,$pri_to,$pri_to]);
         }
 
@@ -871,21 +872,24 @@ class Car extends Bookable
             $this->filterReviewScore($query,$review_scores);
         }
 
-        if(!empty( $service_name = $request['service_name'] ?? "" )){
-            if( setting_item('site_enable_multi_lang') && setting_item('site_locale') != app()->getLocale() ){
-                $query->leftJoin('bravo_car_translations', function ($join) {
-                    $join->on('bravo_cars.id', '=', 'bravo_car_translations.origin_id');
-                });
-                $query->where('bravo_car_translations.title', 'LIKE',  $service_name . '%');
-
-            }else{
-                $query->where('bravo_cars.title', 'LIKE',  $service_name . '%');
-            }
+        if(!empty( $service_name = trim(urldecode((string) ($request['service_name'] ?? ""))) )){
+            $query->where(function ($nameQuery) use ($service_name) {
+                $nameQuery->where('bravo_cars.title', 'LIKE', '%' . $service_name . '%');
+                if (setting_item('site_enable_multi_lang')) {
+                    $nameQuery->orWhereExists(function ($sub) use ($service_name) {
+                        $sub->selectRaw('1')
+                            ->from('bravo_car_translations')
+                            ->whereColumn('bravo_car_translations.origin_id', 'bravo_cars.id')
+                            ->where('bravo_car_translations.title', 'LIKE', '%' . $service_name . '%');
+                    });
+                }
+            });
         }
 
         if(!empty($lat = $request["map_lat"] ?? "") and !empty($lgn = $request["map_lgn"] ?? "") and !empty($request["map_place"] ?? ""))
         {
-            $this->filterLatLng($query,$lat,$lgn);
+            // Use map location for ordering only; do not hide cars outside the radius.
+            $this->filterLatLng($query, $lat, $lgn, false);
         }
 
         if(!empty($request['is_featured']))
@@ -915,8 +919,8 @@ class Car extends Bookable
                 if(!empty($request['order']) and !empty($request['order_by'])){
                     $query->orderBy("bravo_cars.".$request['order'], $request['order_by']);
                 }else{
-                    $query->orderBy("is_featured", "desc");
-                    $query->orderBy("id", "desc");
+                    $query->orderBy("bravo_cars.is_featured", "desc");
+                    $query->orderBy("bravo_cars.id", "desc");
                 }
         }
 

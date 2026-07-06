@@ -12,10 +12,14 @@
                     <div class="col-md-{{ $field['size'] ?? "6" }} border-right">
                         @switch($field['field'])
                             @case ('service_name')
-                                @include('Tour::frontend.layouts.search.fields.service_name')
+                            @case ('list_name')
+                                @include('Tour::frontend.layouts.search.fields.list_name')
                             @break
                             @case ('location')
                                 @include('Tour::frontend.layouts.search.fields.location')
+                            @break
+                            @case ('destination')
+                                @include('Tour::frontend.layouts.search.fields.destination')
                             @break
                             @case ('date')
                                 @include('Tour::frontend.layouts.search.fields.date')

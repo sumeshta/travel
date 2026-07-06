@@ -51,6 +51,9 @@
     @include('Layout::parts.phone-intl-css')
     {{--Custom Style--}}
     <link href="{{ route('core.style.customCss') }}" rel="stylesheet">
+    @if(!empty($is_home) || !empty($seo_meta['is_homepage']))
+        <link href="{{ asset('css/home-search-form.css?_ver='.config('app.asset_version')) }}" rel="stylesheet">
+    @endif
     <link href="{{ asset('libs/carousel-2/owl.carousel.css') }}" rel="stylesheet">
     @if(setting_item_with_lang('enable_rtl'))
         <link href="{{ asset('dist/frontend/css/rtl.css') }}" rel="stylesheet">

@@ -840,6 +840,7 @@ class Boat extends Bookable
     {
         $query = parent::query()->select("bravo_boats.*");
         $query->where("bravo_boats.status", "publish");
+        Location::applyPublishedLocationFilter($query, 'bravo_boats');
         if (!empty($location_id = $request["location_id"] ?? "")) {
             $location = Location::query()->where('id', $location_id)->where("status","publish")->first();
             if(!empty($location)){

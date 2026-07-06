@@ -623,12 +623,12 @@ class HotelSeeder extends Seeder
                 ],
                 [
                     'name'=>'hotel_map_search_fields',
-                    'val'=>'[{"field":"location","attr":null,"position":"1"},{"field":"attr","attr":"7","position":"2"},{"field":"date","attr":null,"position":"3"},{"field":"price","attr":null,"position":"4"},{"field":"advance","attr":null,"position":"5"}]',
+                    'val'=>'[{"field":"location","attr":null,"position":"1"},{"field":"attr","attr":"7","position":"2"},{"field":"price","attr":null,"position":"3"},{"field":"advance","attr":null,"position":"4"}]',
                     'group'=>'hotel'
                 ],
                 [
                     'name'=>'hotel_search_fields',
-                    'val'=>'[{"title":"Location","field":"location","size":"4","position":"1"},{"title":"Check In - Out","field":"date","size":"4","position":"2"},{"title":"Guests","field":"guests","size":"4","position":"3"}]',
+                    'val'=>'[{"title":"Location","field":"location","size":"6","position":"1"},{"title":"List Name","field":"service_name","size":"6","position":"2"}]',
                     'group'=>'hotel'
                 ]
 

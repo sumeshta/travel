@@ -1,0 +1,275 @@
+/* Home page multi-service search form - v3.4.2 */
+
+/* carousel_v2: empty nav-tabs had 300px margin in app.css — collapse it */
+.bravo_wrap .page-template-content .bravo-form-search-all.carousel_v2 #g-form-control-id .nav-tabs:empty {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  border: none !important;
+}
+.bravo_wrap .page-template-content .bravo-form-search-all.carousel_v2 #g-form-control-id .nav-tabs {
+  margin-top: 0 !important;
+}
+.bravo_wrap .page-template-content .bravo-form-search-all.carousel_v2 #g-form-control-id {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.bravo_wrap .page-template-content .bravo-form-search-all #g-form-control-id {
+  top: 21px !important;
+}
+@media (max-width: 767px) {
+  .bravo_wrap .page-template-content .bravo-form-search-all #g-form-control-id {
+    top: 120px !important;
+  }
+}
+#searchForm.is-stay-search .location-field .form-content,
+#searchForm.is-stay-search .home-search-list-name .form-content,
+#searchForm.is-agent-search .location-field .form-content,
+#searchForm.is-agent-search .home-search-list-name .form-content,
+#searchForm.is-tour-package-search .tour-package-field .form-content,
+#searchForm.is-tour-package-search .home-search-list-name .form-content {
+  padding: 20px 15px 10px 50px;
+}
+#searchForm.is-stay-search .location-field .field-icon,
+#searchForm.is-stay-search .home-search-list-name .field-icon,
+#searchForm.is-agent-search .location-field .field-icon,
+#searchForm.is-agent-search .home-search-list-name .field-icon,
+#searchForm.is-tour-package-search .tour-package-field .field-icon,
+#searchForm.is-tour-package-search .home-search-list-name .field-icon {
+  left: 15px;
+  top: 50%;
+  margin-top: 0;
+  transform: translateY(-50%);
+  font-size: 28px;
+  line-height: 1;
+}
+#searchForm.is-stay-search .input-search,
+#searchForm.is-agent-search .input-search,
+#searchForm.is-tour-package-search .input-search {
+  position: relative;
+}
+@media (max-width: 1023px) {
+  #searchForm.is-stay-search.bravo_form,
+  #searchForm.is-vehicle-search.bravo_form,
+  #searchForm.is-agent-search.bravo_form,
+  #searchForm.is-tour-package-search.bravo_form {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+  }
+  #searchForm.is-stay-search .g-field-search,
+  #searchForm.is-vehicle-search .g-field-search,
+  #searchForm.is-agent-search .g-field-search,
+  #searchForm.is-tour-package-search .g-field-search {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 15px;
+  }
+  #searchForm.is-stay-search .g-field-search > .row,
+  #searchForm.is-vehicle-search .g-field-search > .row,
+  #searchForm.is-agent-search .g-field-search > .row,
+  #searchForm.is-tour-package-search .g-field-search > .row {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    margin: 0;
+  }
+  #searchForm.is-stay-search .g-field-search > .row > [class*="col-"],
+  #searchForm.is-vehicle-search .g-field-search > .row > [class*="col-"],
+  #searchForm.is-agent-search .g-field-search > .row > [class*="col-"],
+  #searchForm.is-tour-package-search .g-field-search > .row > [class*="col-"] {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0;
+    border-right: none !important;
+  }
+  #searchForm.is-stay-search .home-search-category,
+  #searchForm.is-vehicle-search .home-search-category,
+  #searchForm.is-agent-search .home-search-category,
+  #searchForm.is-tour-package-search .home-search-category {
+    order: 0;
+  }
+  #searchForm.is-tour-package-search .tour-package-field {
+    order: 1;
+  }
+  #searchForm.is-tour-package-search .tour-package-field + .tour-package-field {
+    order: 2;
+  }
+  #searchForm.is-tour-package-search .home-search-list-name {
+    order: 3;
+  }
+  #searchForm.is-stay-search .location-field,
+  #searchForm.is-agent-search .location-field {
+    order: 1;
+  }
+  #searchForm.is-stay-search .home-search-list-name,
+  #searchForm.is-agent-search .home-search-list-name {
+    order: 2;
+  }
+  #searchForm.is-vehicle-search .location-field {
+    order: 1;
+  }
+  #searchForm.is-vehicle-search .home-search-list-name {
+    order: 2;
+  }
+  #searchForm.is-stay-search .form-group,
+  #searchForm.is-vehicle-search .form-group,
+  #searchForm.is-agent-search .form-group,
+  #searchForm.is-tour-package-search .form-group {
+    position: relative;
+    border-bottom: 1px solid #D7DCE3 !important;
+  }
+  #searchForm.is-stay-search .form-content,
+  #searchForm.is-vehicle-search .form-content,
+  #searchForm.is-agent-search .form-content,
+  #searchForm.is-tour-package-search .form-content {
+    padding: 20px 15px 10px 50px;
+  }
+  #searchForm.is-stay-search .field-icon,
+  #searchForm.is-vehicle-search .field-icon,
+  #searchForm.is-agent-search .field-icon,
+  #searchForm.is-tour-package-search .field-icon {
+    left: 15px;
+    top: 50%;
+    margin-top: 0;
+    transform: translateY(-50%);
+    font-size: 28px;
+    line-height: 1;
+  }
+  #searchForm.is-stay-search .input-search,
+  #searchForm.is-vehicle-search .input-search,
+  #searchForm.is-agent-search .input-search,
+  #searchForm.is-tour-package-search .input-search {
+    position: relative;
+  }
+  #searchForm.is-stay-search label,
+  #searchForm.is-vehicle-search label,
+  #searchForm.is-agent-search label,
+  #searchForm.is-tour-package-search label {
+    font-size: 13px;
+    display: block;
+    margin-bottom: 4px;
+  }
+  #searchForm.is-stay-search .form-control,
+  #searchForm.is-vehicle-search .form-control,
+  #searchForm.is-agent-search .form-control,
+  #searchForm.is-tour-package-search .form-control {
+    font-size: 15px;
+    padding: 0 30px 0 0 !important;
+    height: auto;
+    min-height: 22px;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+  #searchForm.is-stay-search .g-button-submit,
+  #searchForm.is-vehicle-search .g-button-submit,
+  #searchForm.is-agent-search .g-button-submit,
+  #searchForm.is-tour-package-search .g-button-submit {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    text-align: right;
+    padding: 0 15px 12px;
+  }
+  #searchForm.is-stay-search .g-button-submit .btn-search,
+  #searchForm.is-vehicle-search .g-button-submit .btn-search,
+  #searchForm.is-agent-search .g-button-submit .btn-search,
+  #searchForm.is-tour-package-search .g-button-submit .btn-search {
+    display: inline-block;
+    width: auto;
+    height: auto;
+    margin: 8px 0 0;
+    border-radius: 5px;
+    padding: 9px 22px;
+    font-size: 14px;
+  }
+}
+#homeSearchSuggestions.suggestions-list,
+#homeTourDestinationSuggestions.suggestions-list,
+#homeTourStartSuggestions.suggestions-list {
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  z-index: 1000;
+  background: #fff;
+  width: 100%;
+  left: 0;
+  top: 100%;
+}
+#homeSearchSuggestions .suggestion-item,
+#homeTourDestinationSuggestions .suggestion-item,
+#homeTourStartSuggestions .suggestion-item {
+  padding: 10px;
+  cursor: pointer;
+}
+#homeSearchSuggestions .suggestion-item:hover,
+#homeTourDestinationSuggestions .suggestion-item:hover,
+#homeTourStartSuggestions .suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+.tour-home-destination-search,
+.tour-home-start-search {
+  position: relative;
+}
+.bravo-use-current-location {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #5191fa;
+  padding: 0;
+  line-height: 1;
+  z-index: 2;
+  cursor: pointer;
+  font-size: 16px;
+}
+.g-map-place.is-locating .bravo-use-current-location {
+  opacity: 0.5;
+  pointer-events: none;
+}
+#searchForm.is-stay-search .g-map-place .form-control[name="map_place"],
+#searchForm.is-vehicle-search .g-map-place .form-control[name="map_place"],
+#searchForm.is-agent-search .g-map-place .form-control[name="map_place"],
+#searchForm.is-tour-package-search .tour-package-field .form-control,
+#searchForm.is-stay-search .home-search-list-name .form-control,
+#searchForm.is-vehicle-search .home-search-list-name .form-control,
+#searchForm.is-agent-search .home-search-list-name .form-control,
+#searchForm.is-tour-package-search .home-search-list-name .form-control {
+  padding-right: 30px !important;
+}
+
+/* Desktop field layout (all categories) */
+.bravo_wrap .page-template-content .bravo-form-search-all #searchForm.is-tour-package-search .home-search-category .form-content,
+.bravo_wrap .page-template-content .bravo-form-search-all #searchForm.is-tour-package-search .tour-package-field .form-content,
+.bravo_wrap .page-template-content .bravo-form-search-all #searchForm.is-tour-package-search .home-search-list-name .form-content,
+.bravo_wrap .page-template-content .bravo-form-search-all #searchForm.is-stay-search .location-field .form-content,
+.bravo_wrap .page-template-content .bravo-form-search-all #searchForm.is-stay-search .home-search-list-name .form-content,
+.bravo_wrap .page-template-content .bravo-form-search-all #searchForm.is-agent-search .location-field .form-content,
+.bravo_wrap .page-template-content .bravo-form-search-all #searchForm.is-agent-search .home-search-list-name .form-content,
+.bravo_wrap .page-template-content .bravo-form-search-all #searchForm.is-vehicle-search .location-field .form-content,
+.bravo_wrap .page-template-content .bravo-form-search-all #searchForm.is-vehicle-search .home-search-list-name .form-content {
+  padding: 20px 15px 10px 50px;
+}
+.bravo_wrap .page-template-content .bravo-form-search-all #searchForm .form-group {
+  position: relative;
+}
+.bravo_wrap .page-template-content .bravo-form-search-all #searchForm .field-icon {
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 28px;
+  line-height: 1;
+  margin-top: 0;
+}
+.bravo_wrap .page-template-content .bravo-form-search-all #searchForm .input-search {
+  position: relative;
+}

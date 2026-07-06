@@ -22,6 +22,7 @@ jQuery(function ($) {
             var from = input_price.data("from");
             var to = input_price.data("to");
             var symbol = input_price.data("symbol");
+            var hasAppliedRange = !!input_price.val();
             input_price.ionRangeSlider({
                 type: "double",
                 grid: true,
@@ -29,8 +30,22 @@ jQuery(function ($) {
                 max: max,
                 from: from,
                 to: to,
-                prefix: symbol
+                prefix: symbol,
+                onFinish: function (data) {
+                    input_price.val(data.from + ";" + data.to);
+                }
             });
+            if (!hasAppliedRange) {
+                input_price.val('');
+            }
+        });
+        $(this).find(".btn-apply-price-range").click(function () {
+            var input_price = $(this).closest(".bravo-filter-price").find(".filter-price");
+            var slider = input_price.data("ionRangeSlider");
+            if (slider) {
+                var data = slider.result;
+                input_price.val(data.from + ";" + data.to);
+            }
         });
     });
     $(".bravo_form_filter input[type=checkbox]").change(function () {

@@ -88,62 +88,19 @@
             $('.has-datepicker').daterangepicker({
                 singleDatePicker: true,
                 showCalendar: false,
-                autoUpdateInput: false, //disable default date
+                autoUpdateInput: false,
                 sameDate: true,
-                autoApply           : true,
-                disabledPast        : true,
-                enableLoading       : true,
-                showEventTooltip    : true,
-                classNotAvailable   : ['disabled', 'off'],
+                autoApply: true,
+                disabledPast: true,
+                enableLoading: true,
+                showEventTooltip: true,
+                classNotAvailable: ['disabled', 'off'],
                 disableHightLight: true,
-                locale:{
-                    format:'YYYY/MM/DD'
-                }
+                locale: { format: 'YYYY/MM/DD' }
             }).on('apply.daterangepicker', function (ev, picker) {
                 $(this).val(picker.startDate.format('YYYY/MM/DD'));
             });
-
-            new BravoMapEngine('map_content', {
-                fitBounds: true,
-                center: [{{$row->map_lat ?? setting_item('map_lat_default',51.505 ) }}, {{$row->map_lng ?? setting_item('map_lng_default',-0.09 ) }}],
-                zoom:{{$row->map_zoom ?? "8"}},
-                ready: function (engineMap) {
-                    @if($row->map_lat && $row->map_lng)
-                    engineMap.addMarker([{{$row->map_lat}}, {{$row->map_lng}}], {
-                        icon_options: {}
-                    });
-                    @endif
-                    engineMap.on('click', function (dataLatLng) {
-                        engineMap.clearMarkers();
-                        engineMap.addMarker(dataLatLng, {
-                            icon_options: {}
-                        });
-                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
-                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
-                    });
-                    engineMap.on('zoom_changed', function (zoom) {
-                        $("input[name=map_zoom]").attr("value", zoom);
-                    });
-                    if(bookingCore.map_provider === "gmap"){
-                        engineMap.searchBox($('#customPlaceAddress'),function (dataLatLng) {
-                            engineMap.clearMarkers();
-                            engineMap.addMarker(dataLatLng, {
-                                icon_options: {}
-                            });
-                            $("input[name=map_lat]").attr("value", dataLatLng[0]);
-                            $("input[name=map_lng]").attr("value", dataLatLng[1]);
-                        });
-                    }
-                    engineMap.searchBox($('.bravo_searchbox'),function (dataLatLng) {
-                        engineMap.clearMarkers();
-                        engineMap.addMarker(dataLatLng, {
-                            icon_options: {}
-                        });
-                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
-                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
-                    });
-                }
-            });
-        })
+        });
     </script>
+    @include('Location::frontend.vendor.places-script')
 @endpush

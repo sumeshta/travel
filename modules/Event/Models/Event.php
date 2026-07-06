@@ -911,6 +911,7 @@ class Event extends Bookable
     {
         $query = parent::query()->select("bravo_events.*");
         $query->where("bravo_events.status", "publish");
+        Location::applyPublishedLocationFilter($query, 'bravo_events');
         if (!empty($location_id = $request['location_id'] ?? "" )) {
             $location = Location::where('id', $location_id)->where("status","publish")->first();
             if(!empty($location)){

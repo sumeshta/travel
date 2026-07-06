@@ -33,13 +33,13 @@ trait HasSearchFilter
         return $query;
     }
 
-    public function filterLatLng(Builder $query,$lat,$lng){
+    public function filterLatLng(Builder $query,$lat,$lng,$applyRadius = true){
 
         $colLat = $this->qualifyColumn('map_lat');
         $colLng = $this->qualifyColumn('map_lng');
         //			3959 - Miles(dặm), 6371 - Kilometers
         $distance  = setting_item($this->type.'_location_radius_value',0);
-        if(!empty($distance) and setting_item($this->type.'_location_search_style')=='autocompletePlace'){
+        if($applyRadius && !empty($distance) and setting_item($this->type.'_location_search_style')=='autocompletePlace'){
             $distanceType = setting_item($this->type.'_location_radius_type',3959);
             if(empty($distanceType)){
                 $distanceType = 3959;

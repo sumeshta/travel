@@ -2,8 +2,15 @@
     <input type="hidden" name="_layout" value="{{$layout ?? ''}}">
     @php $hotel_map_search_fields = setting_item_array('hotel_map_search_fields');
 
+    $hotel_map_search_fields = array_values(array_filter($hotel_map_search_fields, function ($field) {
+        return ($field['field'] ?? '') !== 'date';
+    }));
     $hotel_map_search_fields = array_values(\Illuminate\Support\Arr::sort($hotel_map_search_fields, function ($value) {
-        return $value['position'] ?? 0;
+        $field = $value['field'] ?? '';
+        if ($field === 'location') {
+            return 0;
+        }
+        return (int) ($value['position'] ?? 0) + 1;
     }));
 
     @endphp

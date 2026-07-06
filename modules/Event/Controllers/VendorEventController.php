@@ -193,6 +193,16 @@ class VendorEventController extends FrontendController
 
         apply_service_price_currency_to_request($request, ['price', 'sale_price']);
 
+        if (is_default_lang($request->input('lang'))) {
+            $resolvedLocationId = Location::resolveForService(
+                $request->input('location_id'),
+                $request->input('location_name'),
+                $request->input('map_lat'),
+                $request->input('map_lng')
+            );
+            $request->merge(['location_id' => $resolvedLocationId]);
+        }
+
         $row->fillByAttr($dataKeys,$request->input());
         $row->map_google_url = normalize_google_maps_place_url($request->input('map_google_url'));
 
@@ -207,13 +217,17 @@ class VendorEventController extends FrontendController
                 $this->saveTerms($row, $request);
             }
 
+            $locationPending = $row->location_id && !Location::isPublished($row->location_id);
+            $pendingMsg = $locationPending
+                ? ' ' . __('Location is pending admin approval and will appear in search after it is published.')
+                : '';
             if($id > 0 ){
                 event(new UpdatedServiceEvent($row));
 
-                return back()->with('success',  __('Event updated') );
+                return back()->with('success',  __('Event updated') . $pendingMsg);
             }else{
                 event(new CreatedServicesEvent($row));
-                return redirect(route('event.vendor.edit',['id'=>$row->id]))->with('success', __('Event created') );
+                return redirect(route('event.vendor.edit',['id'=>$row->id]))->with('success', __('Event created') . $pendingMsg);
             }
         }
     }

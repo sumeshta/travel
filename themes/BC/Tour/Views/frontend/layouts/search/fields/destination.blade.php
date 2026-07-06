@@ -1,17 +1,17 @@
 <div class="form-group">
     <i class="field-icon fa icofont-map"></i>
     <div class="form-content">
-        <label>{{ $field['title'] ?? __("Location") }}</label>
-        <div class="input-search tour-start-search">
-            <input type="text" name="departure" id="tour_start_location" class="form-control"
-                   placeholder="{{__("Tour start location")}}" value="{{ request()->input('departure') }}" autocomplete="off">
-            <div class="suggestions-list tour-start-suggestions"></div>
+        <label>{{ $field['title'] ?? __("Tour Destination") }}</label>
+        <div class="input-search tour-destination-search">
+            <input type="text" name="destination" id="tour_destination" class="form-control"
+                   placeholder="{{__("Tour end destination")}}" value="{{ request()->input('destination') }}" autocomplete="off">
+            <div class="suggestions-list tour-destination-suggestions"></div>
         </div>
     </div>
 </div>
 <style>
-    .tour-start-search { position: relative; }
-    .tour-start-suggestions {
+    .tour-destination-search { position: relative; }
+    .tour-destination-suggestions {
         border: 1px solid #ccc;
         max-height: 200px;
         overflow-y: auto;
@@ -22,18 +22,18 @@
         right: 0;
         display: none;
     }
-    .tour-start-suggestions .suggestion-item {
+    .tour-destination-suggestions .suggestion-item {
         padding: 10px;
         cursor: pointer;
     }
-    .tour-start-suggestions .suggestion-item:hover {
+    .tour-destination-suggestions .suggestion-item:hover {
         background: #f0f0f0;
     }
 </style>
 <script>
 jQuery(function ($) {
-    var $input = $('#tour_start_location');
-    var $box = $input.siblings('.tour-start-suggestions');
+    var $input = $('#tour_destination');
+    var $box = $input.siblings('.tour-destination-suggestions');
     var xhr = null;
 
     $input.on('keyup', function () {
@@ -43,7 +43,7 @@ jQuery(function ($) {
             return;
         }
         if (xhr) xhr.abort();
-        xhr = $.get('{{ route("tour.departure.search") }}', { query: query })
+        xhr = $.get('{{ route("tour.destination.search") }}', { query: query })
             .done(function (data) {
                 $box.empty();
                 if (data && data.length) {
@@ -62,13 +62,13 @@ jQuery(function ($) {
             });
     });
 
-    $(document).on('click', '.tour-start-suggestions .suggestion-item', function () {
+    $(document).on('click', '.tour-destination-suggestions .suggestion-item', function () {
         $input.val($(this).text());
         $box.hide().empty();
     });
 
     $(document).on('click', function (e) {
-        if (!$(e.target).closest('.tour-start-search').length) {
+        if (!$(e.target).closest('.tour-destination-search').length) {
             $box.hide();
         }
     });

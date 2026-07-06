@@ -97,7 +97,22 @@
                 return x.value;
             });
             filterFormData = form.find('input,textarea,select').serializeArray().filter(function (x) {
-                return x.value;
+                if (!x.value) {
+                    return false;
+                }
+                if (x.name === 'price_range') {
+                    const $input = form.find('[name="price_range"]');
+                    const min = parseFloat($input.data('min'));
+                    const max = parseFloat($input.data('max'));
+                    const parts = String(x.value).split(';');
+                    if (parts.length === 2
+                        && !isNaN(min) && !isNaN(max)
+                        && parseFloat(parts[0]) === min
+                        && parseFloat(parts[1]) === max) {
+                        return false;
+                    }
+                }
+                return true;
             });
             orderFormData = orderForm.find('input,textarea,select').serializeArray().filter(function (x) {
                 return x.value;
@@ -109,7 +124,7 @@
                 toggleClearFilter(false);
             }
             const params = [...topFormData,...orderFormData, ...filterFormData];
-            fullUrl = currentUrl + '?' + params.map((p)=>p.name+"="+p.value).join('&');
+            fullUrl = currentUrl + '?' + params.map((p)=>encodeURIComponent(p.name)+"="+encodeURIComponent(p.value)).join('&');
         }else{
             fullUrl = withUrl;
         }

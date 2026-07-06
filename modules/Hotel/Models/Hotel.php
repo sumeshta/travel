@@ -1021,6 +1021,8 @@ class Hotel extends Bookable
     {
         $model_hotel = parent::query()->select("bravo_hotels.*");
         $model_hotel->where("bravo_hotels.status", "publish");
+        // Hotels linked to draft/unpublished locations stay out of public search until admin publishes the location.
+        Location::applyPublishedLocationFilter($model_hotel, 'bravo_hotels');
         if (!empty($location_id = $request['location_id'] ?? "")) {
             $location = Location::query()->where('id', $location_id)->where("status","publish")->first();
             if(!empty($location)){

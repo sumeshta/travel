@@ -65,10 +65,6 @@
                     ];
                 }
             }
-            $limit_location = 15;
-            if (empty(setting_item("tour_location_search_style")) or setting_item("tour_location_search_style") == "normal") {
-                $limit_location = 1000;
-            }
             $data = [
                 'rows' => $list,
             ];
@@ -85,7 +81,7 @@
             $data = [
                 'rows' => $list,
                 'tour_category' => $this->tourCategoryClass::where('status', 'publish')->with(['translation'])->get()->toTree(),
-                'tour_location' => $this->locationClass::where('status', 'publish')->with(['translation'])->limit($limit_location)->get()->toTree(),
+                'tour_location' => $this->locationClass::where('status', 'publish')->with(['translation'])->limit(1000)->get()->toTree(),
                 'tour_min_max_price' => $this->tourClass::getMinMaxPrice(),
                 'markers' => $markers,
                 "blank" => setting_item('search_open_tab') == "current_tab" ? 0 : 1,
@@ -159,5 +155,54 @@
                 ->get();
 
             return response()->json($services);
+        }
+
+        public function searchDestinations(Request $request)
+        {
+            return $this->searchTourPlaceSuggestions($request, 'destination');
+        }
+
+        public function searchDepartures(Request $request)
+        {
+            return $this->searchTourPlaceSuggestions($request, 'departure');
+        }
+
+        protected function searchTourPlaceSuggestions(Request $request, string $column)
+        {
+            $query = trim((string) $request->get('query', ''));
+            if ($query === '') {
+                return response()->json([]);
+            }
+
+            $fromField = Tour::query()
+                ->where('status', 'publish')
+                ->whereNotNull($column)
+                ->where($column, '!=', '')
+                ->where($column, 'LIKE', '%' . $query . '%')
+                ->distinct()
+                ->orderBy($column)
+                ->limit(10)
+                ->pluck($column);
+
+            $fromTitle = Tour::query()
+                ->where('status', 'publish')
+                ->where('title', 'LIKE', '%' . $query . '%')
+                ->orderBy('title')
+                ->limit(10)
+                ->pluck('title');
+
+            $suggestions = $fromField
+                ->merge($fromTitle)
+                ->filter()
+                ->unique(function ($value) {
+                    return mb_strtolower(trim($value));
+                })
+                ->take(10)
+                ->values()
+                ->map(function ($title) {
+                    return ['title' => $title];
+                });
+
+            return response()->json($suggestions);
         }
     }

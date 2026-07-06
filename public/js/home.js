@@ -124,22 +124,166 @@ jQuery(function ($) {
         }
         return html;
     }
-    $(".g-map-place").each(function () {
-        var map = $(this).find('.map').attr('id');
-        var searchInput =  $(this).find('input[name=map_place]');
-        var latInput = $(this).find('input[name="map_lat"]');
-        var lgnInput = $(this).find('input[name="map_lgn"]');
-        new BravoMapEngine(map, {
-            fitBounds: true,
-            center: [ 51.505, -0.09],
-            ready: function (engineMap) {
-            engineMap.searchBox(searchInput,function (dataLatLng) {
-                latInput.attr("value", dataLatLng[0]);
-                lgnInput.attr("value", dataLatLng[1]);
+
+    function bravoReverseGeocode(lat, lng, callback) {
+        var latitude = parseFloat(lat);
+        var longitude = parseFloat(lng);
+        if (isNaN(latitude) || isNaN(longitude)) {
+            callback('');
+            return;
+        }
+
+        if (typeof bookingCore !== 'undefined' && bookingCore.map_provider === 'gmap' && window.google && google.maps && google.maps.Geocoder) {
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ location: { lat: latitude, lng: longitude } }, function (results, status) {
+                if (status === 'OK' && results && results.length) {
+                    callback(results[0].formatted_address || '');
+                } else {
+                    callback('');
+                }
+            });
+            return;
+        }
+
+        $.ajax({
+            url: 'https://nominatim.openstreetmap.org/reverse',
+            data: { format: 'json', lat: latitude, lon: longitude },
+            dataType: 'json'
+        }).done(function (res) {
+            callback(res && res.display_name ? res.display_name : '');
+        }).fail(function () {
+            callback('');
+        });
+    }
+
+    function bravoApplyCurrentLocation($place) {
+        if (!$place || !$place.length || !navigator.geolocation) {
+            return;
+        }
+
+        var searchInput = $place.find('input[name=map_place]');
+        var latInput = $place.find('input[name=map_lat]');
+        var lgnInput = $place.find('input[name=map_lgn]');
+        if (!searchInput.length || !latInput.length || !lgnInput.length) {
+            return;
+        }
+
+        $place.addClass('is-locating');
+        navigator.geolocation.getCurrentPosition(function (pos) {
+            var lat = pos.coords.latitude;
+            var lng = pos.coords.longitude;
+            latInput.val(lat).trigger('change');
+            lgnInput.val(lng).trigger('change');
+            bravoReverseGeocode(lat, lng, function (address) {
+                if (address) {
+                    searchInput.val(address).trigger('change');
+                }
+                $place.removeClass('is-locating');
+            });
+        }, function () {
+            $place.removeClass('is-locating');
+        }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+    }
+
+    function bravoHasMapPlaceValue($place) {
+        return !!(
+            $.trim($place.find('input[name=map_place]').val()) ||
+            $.trim($place.find('input[name=map_lat]').val()) ||
+            $.trim($place.find('input[name=map_lgn]').val())
+        );
+    }
+
+    function bravoInitMapPlaceLocation($place, options) {
+        options = options || {};
+        var autoFill = options.autoFill !== false;
+
+        if (!$place.find('.bravo-use-current-location').length) {
+            var $target = $place.find('.input-search').first();
+            if (!$target.length) {
+                $target = $place;
+            }
+            if ($target.css('position') === 'static') {
+                $target.css('position', 'relative');
+            }
+            var $btn = $('<button type="button" class="bravo-use-current-location" title="Use current location" aria-label="Use current location"><i class="fa fa-crosshairs"></i></button>');
+            $target.append($btn);
+            $btn.on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                bravoApplyCurrentLocation($place);
             });
         }
-    });
 
+        if (autoFill && !bravoHasMapPlaceValue($place)) {
+            bravoApplyCurrentLocation($place);
+        }
+    }
+
+    window.bravoApplyCurrentLocation = bravoApplyCurrentLocation;
+    window.bravoInitMapPlaceLocation = bravoInitMapPlaceLocation;
+
+    if (!$('#bravo-map-place-location-style').length) {
+        $('head').append(
+            '<style id="bravo-map-place-location-style">' +
+            '.bravo-use-current-location{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:none;background:transparent;color:#5191fa;padding:0;line-height:1;z-index:2;cursor:pointer;font-size:16px}' +
+            '.g-map-place.is-locating .bravo-use-current-location{opacity:.5;pointer-events:none}' +
+            '.g-map-place .form-control[name="map_place"],.input-search.g-map-place .form-control[name="map_place"]{padding-right:30px!important}' +
+            '</style>'
+        );
+    }
+
+    function bravoBindMapPlaceAutocomplete($place) {
+        var searchInput = $place.find('input[name=map_place]');
+        var latInput = $place.find('input[name="map_lat"]');
+        var lgnInput = $place.find('input[name="map_lgn"]');
+        if (!searchInput.length || !latInput.length || !lgnInput.length) {
+            return;
+        }
+
+        var applyPlace = function (lat, lng) {
+            latInput.attr("value", lat).trigger('change');
+            lgnInput.attr("value", lng).trigger('change');
+        };
+
+        // Prefer Places Autocomplete (works even when the map container is hidden).
+        if (typeof window.bravoBindPlacesAutocomplete === 'function') {
+            window.bravoBindPlacesAutocomplete(searchInput, {
+                onPlace: function (place, coords) {
+                    applyPlace(coords.lat, coords.lng);
+                    if (place.name || place.formatted_address) {
+                        searchInput.val(place.formatted_address || place.name).trigger('change');
+                    }
+                }
+            });
+            return;
+        }
+
+        var map = $place.find('.map').attr('id');
+        if (!map || typeof BravoMapEngine === 'undefined') {
+            return;
+        }
+        new BravoMapEngine(map, {
+            fitBounds: true,
+            center: [51.505, -0.09],
+            ready: function (engineMap) {
+                engineMap.searchBox(searchInput, function (dataLatLng) {
+                    applyPlace(dataLatLng[0], dataLatLng[1]);
+                });
+            }
+        });
+    }
+
+    $(".g-map-place").each(function () {
+        var $place = $(this);
+        var bind = function () {
+            bravoBindMapPlaceAutocomplete($place);
+        };
+        if (typeof window.bravoWhenGooglePlacesReady === 'function') {
+            window.bravoWhenGooglePlacesReady(bind);
+        } else {
+            bind();
+        }
+        bravoInitMapPlaceLocation($place, { autoFill: true });
     });
 
 
